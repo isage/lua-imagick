@@ -15,5 +15,5 @@ install:
 
 script:
   - cmake ${USE_LUA} -DUSE_IMAGEMAGICK=ON .
-  - make
+  - VERBOSE=1 make
   - make unittest
