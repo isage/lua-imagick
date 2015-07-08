@@ -53,7 +53,7 @@ add_definitions("-Wall")
 
 IF(USE_IMAGEMAGICK)
 
-  find_package(ImageMagick COMPONENTS MagickWand REQUIRED)
+  find_package(ImageMagick COMPONENTS MagickWand MagickCore REQUIRED)
 
   add_library(im SHARED ${sources})
   set_target_properties(im PROPERTIES PREFIX "")
