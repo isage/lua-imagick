@@ -198,14 +198,28 @@ int luaopen_gimagick(lua_State* L)
 {
   // image "class"
   luaL_newmetatable(L, IMG_METATABLE);
+#if LUA_VERSION_NUM >= 502
+  luaL_setfuncs(L, gimagicklib_meta , 0);
+#else
   luaL_register(L, NULL, gimagicklib_meta);
+#endif
+
   lua_newtable(L);
+#if LUA_VERSION_NUM >= 502
+  luaL_setfuncs(L, gimagicklib_m , 0);
+#else
   luaL_register(L, NULL, gimagicklib_m);
+#endif
+
   lua_setfield(L, -2, "__index");
 
   // gimagick "class"
   lua_newtable(L);
+#if LUA_VERSION_NUM >= 502
+  luaL_setfuncs(L, gimagicklib_f , 0);
+#else
   luaL_register(L, NULL, gimagicklib_f);
+#endif
 
   lua_pushliteral(L, GIMAGICK_MODNAME);
   lua_setfield(L, -2, "_NAME");
