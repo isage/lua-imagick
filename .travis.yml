@@ -11,7 +11,7 @@ before_install:
 install:
   - sudo add-apt-repository --yes ppa:smspillaz/cmake-2.8.12
   - sudo apt-get update -qq
-  - sudo apt-get -qq install cmake libmagickcore-dev libmagickwand-dev libgraphicsmagick1-dev
+  - sudo apt-get install cmake libmagickcore-dev libmagickwand-dev libgraphicsmagick1-dev
 
 script:
   - cmake ${USE_LUA} -DUSE_IMAGEMAGICK=ON .
