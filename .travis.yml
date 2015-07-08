@@ -9,7 +9,7 @@ before_install:
   - bash .travis_setup.sh
 
 install:
-  - sudo add-apt-repository --yes ppa:kalakris/cmake
+  - sudo add-apt-repository --yes ppa:george-edison55/cmake-3.x
   - sudo apt-get update -qq
   - sudo apt-get -qq install cmake libmagickcore-dev libmagickwand-dev libgraphicsmagick1-dev
 
