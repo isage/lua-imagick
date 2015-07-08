@@ -1,9 +1,9 @@
 language: c
 
 env:
-  - LUA='Lua 5.1' USE_LUA='USE_LUA=ON'
-  - LUA='Lua 5.2' USE_LUA='USE_LUA52=ON'
-  - LUA='LuaJIT 2.0' USE_LUA='USE_LUAJIT=ON'
+  - LUA='Lua 5.1' USE_LUA='-DUSE_LUA=ON -DUSE_LUA52=OFF -DUSE_LUAJIT=OFF'
+  - LUA='Lua 5.2' USE_LUA='-DUSE_LUA=OFF -DUSE_LUA52=ON -DUSE_LUAJIT=OFF'
+  - LUA='LuaJIT 2.0' USE_LUA='-DUSE_LUA=OFF -DUSE_LUA52=OFF -DUSE_LUAJIT=ON'
 
 before_install:
   - bash .travis_setup.sh
@@ -13,6 +13,6 @@ install:
   - sudo apt-get -qq install libmagickcore-dev libmagickwand-dev libgraphicsmagick1-dev
 
 script:
-  - cmake -D${USE_LUA} -DUSE_IMAGEMAGICK=ON .
+  - cmake ${USE_LUA} -DUSE_IMAGEMAGICK=ON .
   - make
   - make unittest
