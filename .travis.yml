@@ -10,6 +10,8 @@ before_install:
 
 install:
   - sudo add-apt-repository --yes ppa:smspillaz/cmake-2.8.12
+  - sudo add-apt-repository --yes ppa:rwky/graphicsmagick
+  - sudo add-apt-repository --yes ppa:oded-geek/multimedia
   - sudo apt-get update -qq
   - sudo apt-get install cmake cmake-data libmagickcore-dev libmagickwand-dev libgraphicsmagick1-dev libgraphicsmagick++1-dev
 
