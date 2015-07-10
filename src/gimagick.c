@@ -144,7 +144,6 @@ static int gimagick_write_all(lua_State* L)
     lua_pushboolean(L, 0);
     lua_pushstring(L, error);
     return 2;
-
   }
   lua_pushboolean(L, 1);
   return 1;
@@ -156,6 +155,22 @@ static int gimagick_get_format(lua_State* L)
   char* format = MagickGetImageFormat(a->m_wand);
   lua_pushstring(L,format);
   MagickRelinquishMemory(format);
+  return 1;
+}
+
+static int gimagick_set_format(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  const char* format = luaL_checkstring(L, 2);
+  if (MagickSetImageFormat(a->m_wand, format) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
   return 1;
 }
 
@@ -177,6 +192,7 @@ static const struct luaL_Reg gimagicklib_m[] = {
   {"write",       gimagick_write},
   {"write_all",   gimagick_write_all},
   {"get_format",  gimagick_get_format},
+  {"set_format",  gimagick_set_format},
   {NULL, NULL}
 };
 
