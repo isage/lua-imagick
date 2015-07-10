@@ -11,84 +11,100 @@ TestIM = {}
       self.ima = require("gimagick.im")
     end
 
-    function TestGM:testApi()
+    function TestGM:test00_Api()
         luaunit.assertEquals( self.ima.api(), 'gm' )
     end
 
-    function TestIM:testApi()
+    function TestIM:test00_Api()
         luaunit.assertEquals( self.ima.api(), 'im' )
     end
 
-    function TestGM:testOpen()
+    function TestGM:test01_Open()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         luaunit.assertIsUserdata(img)
     end
 
-    function TestIM:testOpen()
+    function TestIM:test01_Open()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         luaunit.assertIsUserdata(img)
     end
 
-    function TestGM:testNotOpen()
+    function TestGM:test02_NotOpen()
         local img, err = self.ima.open("not.exists")
         luaunit.assertNil(img)
         luaunit.assertEquals(err, "Unable to open file (not.exists)")
     end
 
-    function TestIM:testNotOpen()
+    function TestIM:test02_NotOpen()
         local img, err = self.ima.open("not.exists")
         luaunit.assertNil(img)
         luaunit.assertStrContains(err, "unable to open image `not.exists'")
     end
 
-    function TestGM:testToString()
+    function TestGM:test03_ToString()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         luaunit.assertEquals(tostring(img), "JPEG(400x600)")
     end
 
-    function TestIM:testToString()
+    function TestIM:test03_ToString()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         luaunit.assertEquals(tostring(img), "JPEG(400x600)")
     end
 
-    function TestGM:testGetFormat()
+    function TestGM:test04_GetFormat()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         luaunit.assertEquals(img:get_format(), "JPEG")
     end
 
-    function TestIM:testGetFormat()
+    function TestIM:test04_GetFormat()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         luaunit.assertEquals(img:get_format(), "JPEG")
     end
 
-    function TestGM:testWrite()
+    function TestGM:test05_SetFormat()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        luaunit.assertEquals(img:get_format(), "JPEG")
+        img:set_format("PNG")
+        luaunit.assertEquals(img:get_format(), "PNG")
+    end
+
+    function TestIM:test05_SetFormat()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        luaunit.assertEquals(img:get_format(), "JPEG")
+        img:set_format("PNG")
+        luaunit.assertEquals(img:get_format(), "PNG")
+    end
+
+    function TestGM:test06_Write()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         local suc, err = img:write("out.png")
         luaunit.assertTrue(suc)
     end
 
-    function TestIM:testWrite()
+    function TestIM:test06_Write()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         local suc, err = img:write("out.png")
         luaunit.assertTrue(suc)
     end
 
-    function TestGM:testWriteAll()
+    function TestGM:test07_WriteAll()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         local suc, err = img:write_all("out.gif")
         luaunit.assertTrue(suc)
     end
 
-    function TestIM:testWriteAll()
+    function TestIM:test07_WriteAll()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         local suc, err = img:write_all("out.gif")
