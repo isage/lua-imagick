@@ -46,13 +46,13 @@ TestIM = {}
     function TestGM:test03_ToString()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
-        luaunit.assertEquals(tostring(img), "JPEG(400x600)")
+        luaunit.assertEquals(tostring(img), "JPEG(768x576)")
     end
 
     function TestIM:test03_ToString()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
-        luaunit.assertEquals(tostring(img), "JPEG(400x600)")
+        luaunit.assertEquals(tostring(img), "JPEG(768x576)")
     end
 
     function TestGM:test04_GetFormat()
