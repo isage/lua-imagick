@@ -111,5 +111,40 @@ TestIM = {}
         luaunit.assertTrue(suc)
     end
 
+    function TestGM:test08_Blob()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        local blob, len = img:blob()
+        luaunit.assertStrContains(blob, "JFIF")
+    end
+
+    function TestIM:test08_Blob()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        local blob, len = img:blob()
+        luaunit.assertStrContains(blob, "JFIF")
+    end
+
+    function TestGM:test09_Quality()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        local quality = img:get_quality()
+        luaunit.assertEquals(quality, 75)
+        -- GM doesn't have get_quality
+        --img:set_quality(90)
+        --quality = img:get_quality()
+        --luaunit.assertEquals(quality, 75)
+    end
+
+    function TestIM:test09_Quality()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        local quality = img:get_quality()
+        luaunit.assertEquals(quality, 92)
+        img:set_quality(90)
+        quality = img:get_quality()
+        luaunit.assertEquals(quality, 90)
+    end
+
 os.exit( luaunit.LuaUnit.run() )
 

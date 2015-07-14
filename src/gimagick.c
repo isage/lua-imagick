@@ -97,7 +97,7 @@ int gimagick_tostring(lua_State* L)
 }
 
 
-static int gimagick_getwidth(lua_State* L)
+static int gimagick_width(lua_State* L)
 {
   LuaImage *a = checkimage(L);
   int w = MagickGetImageWidth(a->m_wand);
@@ -105,7 +105,7 @@ static int gimagick_getwidth(lua_State* L)
   return 1;
 }
 
-static int gimagick_getheight(lua_State* L)
+static int gimagick_height(lua_State* L)
 {
   LuaImage *a = checkimage(L);
   int h = MagickGetImageHeight(a->m_wand);
@@ -174,6 +174,60 @@ static int gimagick_set_format(lua_State* L)
   return 1;
 }
 
+static int gimagick_get_quality(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+#if defined(USE_IMAGEMAGICK)
+  size_t quality = MagickGetImageCompressionQuality(a->m_wand);
+#else
+  size_t quality = 75; // Why GM doesn't have this?
+  (void)a->m_wand; // shut up, gcc
+#endif
+  lua_pushinteger(L, quality);
+  return 1;
+}
+
+static int gimagick_set_quality(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  const size_t quality = luaL_checkinteger(L, 2);
+#if defined(USE_IMAGEMAGICK)
+  if (MagickSetImageCompressionQuality(a->m_wand, quality) != MagickTrue)
+#else
+  if (MagickSetCompressionQuality(a->m_wand, quality) != MagickTrue)
+#endif
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int gimagick_blob(lua_State* L)
+{
+  size_t length;
+
+  LuaImage* a = checkimage(L);
+
+#if defined(USE_IMAGEMAGICK)
+  unsigned char* data = MagickGetImageBlob(a->m_wand, &length);
+#else
+  unsigned char* data = MagickWriteImageBlob(a->m_wand, &length);
+#endif
+
+  lua_pushlstring(L, (const char*)data, length);
+  lua_pushinteger(L, length);
+
+  MagickRelinquishMemory(data);
+
+  return 2;
+}
+
+
 static const struct luaL_Reg gimagicklib_f[] = {
   {"open", gimagick_open},
   {"api", gimagick_api},
@@ -187,12 +241,58 @@ static const struct luaL_Reg gimagicklib_meta[] = {
 };
 
 static const struct luaL_Reg gimagicklib_m[] = {
-  {"width",       gimagick_getwidth},
-  {"height",      gimagick_getheight},
+  {"width",       gimagick_width},
+  {"height",      gimagick_height},
   {"write",       gimagick_write},
   {"write_all",   gimagick_write_all},
   {"get_format",  gimagick_get_format},
   {"set_format",  gimagick_set_format},
+  {"get_quality", gimagick_get_quality},
+  {"set_quality", gimagick_set_quality},
+  {"blob",        gimagick_blob},
+
+  /*
+    TODO:
+    get_option = function(self, magick, key)
+    set_option = function(self, magick, key, value)
+
+    get_gravity = function(self)
+    set_gravity = function(self, typestr)
+
+    strip = function(self)
+    swirl = function(self, degrees)
+    oil_paint = function(self, radius)
+    annotate = function(self, color, size, x, y, angle, text)
+    blur = function(self, sigma, radius)
+    sharpen = function(self, sigma, radius)
+
+    get_ac = function(self)
+
+    set_color = function(self, color)
+    get_color = function(self)
+    get_alpha = function(self)
+
+    smart_resize = function(self, sizestr)
+    resize = function(self, w, h, f, blur)
+    adaptive_resize = function(self, w, h)
+    scale = function(self, w, h)
+    crop = function(self, w, h, x, y)
+    extent = function(self, w, h)
+
+    optimize = function(self)
+    composite = function(self, blob, x, y, opstr)
+    set_compose = function(self, opstr)
+    coalesce = function(self)
+    colorspace = function(self)
+
+    color_profile = function(self)
+    apply_color_profile = function(self, path)
+    reprofile = function(self)
+
+    get_blob = function(self)
+    get_pixel = function(self, x, y)
+
+*/
   {NULL, NULL}
 };
 
