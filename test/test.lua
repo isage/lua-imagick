@@ -146,5 +146,26 @@ TestIM = {}
         luaunit.assertEquals(quality, 90)
     end
 
+    function TestGM:test10_Gravity()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        local gravity = img:get_gravity()
+        luaunit.assertEquals(gravity, self.ima.gravity['ForgetGravity'])
+        img:set_gravity(self.ima.gravity['WestGravity'])
+        gravity = img:get_gravity()
+        luaunit.assertEquals(gravity, self.ima.gravity['WestGravity'])
+    end
+
+    function TestIM:test10_Gravity()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        local gravity = img:get_gravity()
+        luaunit.assertEquals(gravity, self.ima.gravity['ForgetGravity'])
+        img:set_gravity(self.ima.gravity['WestGravity'])
+        gravity = img:get_gravity()
+        luaunit.assertEquals(gravity, self.ima.gravity['WestGravity'])
+    end
+
+
 os.exit( luaunit.LuaUnit.run() )
 

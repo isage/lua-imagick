@@ -10,6 +10,8 @@
 #define IMG_METATABLE "image-im metatable"
 #else
 #define IMG_METATABLE "image-gm metatable"
+// Meh. https://sourceforge.net/p/graphicsmagick/bugs/308/
+extern WandExport GravityType MagickGetImageGravity(MagickWand* wand);
 #endif
 
 #ifndef GIMAGICK_MODNAME
@@ -227,6 +229,39 @@ static int gimagick_blob(lua_State* L)
   return 2;
 }
 
+static int gimagick_get_gravity(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+
+  size_t gravity = MagickGetImageGravity(a->m_wand);
+  lua_pushinteger(L, gravity);
+  return 1;
+}
+
+static int gimagick_set_gravity(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  const size_t gravity = luaL_checkinteger(L, 2);
+
+  if (gravity > StaticGravity)
+  {
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, "Wrong gravity type");
+    return 2;
+  }
+
+  if (MagickSetImageGravity(a->m_wand, gravity) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg gimagicklib_f[] = {
   {"open", gimagick_open},
@@ -250,14 +285,13 @@ static const struct luaL_Reg gimagicklib_m[] = {
   {"get_quality", gimagick_get_quality},
   {"set_quality", gimagick_set_quality},
   {"blob",        gimagick_blob},
+  {"get_gravity", gimagick_get_gravity},
+  {"set_gravity", gimagick_set_gravity},
 
   /*
     TODO:
     get_option = function(self, magick, key)
     set_option = function(self, magick, key, value)
-
-    get_gravity = function(self)
-    set_gravity = function(self, typestr)
 
     strip = function(self)
     swirl = function(self, degrees)
@@ -289,7 +323,6 @@ static const struct luaL_Reg gimagicklib_m[] = {
     apply_color_profile = function(self, path)
     reprofile = function(self)
 
-    get_blob = function(self)
     get_pixel = function(self, x, y)
 
 */
