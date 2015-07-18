@@ -261,6 +261,28 @@ static int imagick_set_option(lua_State* L)
   return 1;
 }
 
+static int imagick_coalesce(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+
+  MagickWand* tempwand;
+  if ((tempwand=MagickCoalesceImages(a->m_wand)) != NULL)
+  {
+    DestroyMagickWand(a->m_wand);
+    a->m_wand = tempwand;
+    lua_pushboolean(L, 1);
+    return 1;
+  }
+  else
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+}
+
 static int imagick_optimize(lua_State* L)
 {
   LuaImage* a = checkimage(L);
@@ -367,6 +389,14 @@ static int imagick_sharpen(lua_State* L)
   return 1;
 }
 
+static int imagick_get_colorspace(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  int colorspace = MagickGetImageColorspace(a->m_wand);
+  lua_pushnumber(L, colorspace);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -380,25 +410,27 @@ static const struct luaL_Reg imagicklib_meta[] = {
 };
 
 static const struct luaL_Reg imagicklib_m[] = {
-  {"width",       imagick_width},
-  {"height",      imagick_height},
-  {"write",       imagick_write},
-  {"write_all",   imagick_write_all},
-  {"get_format",  imagick_get_format},
-  {"set_format",  imagick_set_format},
-  {"get_quality", imagick_get_quality},
-  {"set_quality", imagick_set_quality},
-  {"blob",        imagick_blob},
-  {"get_gravity", imagick_get_gravity},
-  {"set_gravity", imagick_set_gravity},
-  {"get_option",  imagick_get_option},
-  {"set_option",  imagick_set_option},
-  {"optimize",    imagick_optimize},
-  {"strip",       imagick_strip},
-  {"swirl",       imagick_swirl},
-  {"oilpaint",    imagick_oilpaint},
-  {"blur",        imagick_blur},
-  {"sharpen",     imagick_sharpen},
+  {"width",             imagick_width},
+  {"height",            imagick_height},
+  {"write",             imagick_write},
+  {"write_all",         imagick_write_all},
+  {"get_format",        imagick_get_format},
+  {"set_format",        imagick_set_format},
+  {"get_quality",       imagick_get_quality},
+  {"set_quality",       imagick_set_quality},
+  {"blob",              imagick_blob},
+  {"get_gravity",       imagick_get_gravity},
+  {"set_gravity",       imagick_set_gravity},
+  {"get_option",        imagick_get_option},
+  {"set_option",        imagick_set_option},
+  {"coalesce",          imagick_coalesce},
+  {"optimize",          imagick_optimize},
+  {"strip",             imagick_strip},
+  {"swirl",             imagick_swirl},
+  {"oilpaint",          imagick_oilpaint},
+  {"blur",              imagick_blur},
+  {"sharpen",           imagick_sharpen},
+  {"get_colorspace",    imagick_get_colorspace},
 
   /*
     TODO:
@@ -418,11 +450,8 @@ static const struct luaL_Reg imagicklib_m[] = {
     crop = function(self, w, h, x, y)
     extent = function(self, w, h)
 
-    optimize = function(self)
     composite = function(self, blob, x, y, opstr)
     set_compose = function(self, opstr)
-    coalesce = function(self)
-    colorspace = function(self)
 
     color_profile = function(self)
     apply_color_profile = function(self, path)

@@ -79,6 +79,13 @@ TestIM = {}
         luaunit.assertEquals(gravity, self.ima.gravity['WestGravity'])
     end
 
+    function TestIM:test11_Colorspace()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        local colorspace = img:get_colorspace()
+        luaunit.assertEquals(colorspace, self.ima.colorspace['sRGBColorspace'])
+    end
+
 
 os.exit( luaunit.LuaUnit.run() )
 
