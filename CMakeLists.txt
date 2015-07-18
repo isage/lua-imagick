@@ -61,7 +61,7 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/tests/
                    COMMAND rm -rf ${CMAKE_BINARY_DIR}/tests/
                    COMMAND mkdir ${CMAKE_BINARY_DIR}/tests/
                    COMMAND cp ${CMAKE_SOURCE_DIR}/test/luaunit.lua ${CMAKE_BINARY_DIR}/tests/
-                   COMMAND cp ${CMAKE_SOURCE_DIR}/test/input.jpg ${CMAKE_BINARY_DIR}/tests/
+                   COMMAND cp ${CMAKE_SOURCE_DIR}/test/input.* ${CMAKE_BINARY_DIR}/tests/
                    COMMAND cp ${CMAKE_BINARY_DIR}/imagick.so ${CMAKE_BINARY_DIR}/tests/)
 
 add_custom_target(unittest

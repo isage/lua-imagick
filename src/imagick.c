@@ -392,8 +392,14 @@ static int imagick_sharpen(lua_State* L)
 static int imagick_get_colorspace(lua_State* L)
 {
   LuaImage* a = checkimage(L);
-  int colorspace = MagickGetImageColorspace(a->m_wand);
-  lua_pushnumber(L, colorspace);
+  lua_pushnumber(L, MagickGetImageColorspace(a->m_wand));
+  return 1;
+}
+
+static int imagick_has_alphachannel(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  lua_pushboolean(L, MagickGetImageAlphaChannel(a->m_wand));
   return 1;
 }
 
@@ -431,13 +437,12 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"blur",              imagick_blur},
   {"sharpen",           imagick_sharpen},
   {"get_colorspace",    imagick_get_colorspace},
+  {"has_alphachannel",  imagick_has_alphachannel},
 
   /*
     TODO:
 
     annotate = function(self, color, size, x, y, angle, text)
-
-    get_ac = function(self)
 
     set_color = function(self, color)
     get_color = function(self)

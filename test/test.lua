@@ -86,6 +86,16 @@ TestIM = {}
         luaunit.assertEquals(colorspace, self.ima.colorspace['sRGBColorspace'])
     end
 
+    function TestIM:test12_Alphachannel()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        luaunit.assertFalse(img:has_alphachannel())
+
+        img, err = self.ima.open("input.png")
+        luaunit.assertNotNil(img)
+        luaunit.assertTrue(img:has_alphachannel())
+    end
+
 
 os.exit( luaunit.LuaUnit.run() )
 
