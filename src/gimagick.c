@@ -262,6 +262,56 @@ static int gimagick_set_gravity(lua_State* L)
   return 1;
 }
 
+static int gimagick_get_option(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  const char* key = luaL_checkstring(L,2);
+#if defined(USE_IMAGEMAGICK)
+  char* value = MagickGetOption(a->m_wand, key);
+  lua_pushstring(L, value);
+  MagickRelinquishMemory(value);
+#else
+  (void)a;
+  (void)key;
+  lua_pushstring(L, "unimplemented");
+#endif
+  return 1;
+}
+
+static int gimagick_set_option(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+
+  const char* namespace = luaL_checkstring(L, 2);
+  const char* key = luaL_checkstring(L, 3);
+  const char* value = luaL_checkstring(L, 4);
+#if defined(USE_GRAPHICSMAGICK)
+  if (MagickSetImageOption(a->m_wand, namespace, key, value) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+#else
+  char fullkey[256];
+  snprintf(fullkey, 255, "%s:%s", namespace, key);
+  if (MagickSetOption(a->m_wand, fullkey, value) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+#endif
+}
+
 
 static const struct luaL_Reg gimagicklib_f[] = {
   {"open", gimagick_open},
@@ -287,11 +337,11 @@ static const struct luaL_Reg gimagicklib_m[] = {
   {"blob",        gimagick_blob},
   {"get_gravity", gimagick_get_gravity},
   {"set_gravity", gimagick_set_gravity},
+  {"get_option",  gimagick_get_option},
+  {"set_option",  gimagick_set_option},
 
   /*
     TODO:
-    get_option = function(self, magick, key)
-    set_option = function(self, magick, key, value)
 
     strip = function(self)
     swirl = function(self, degrees)
