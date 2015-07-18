@@ -331,6 +331,42 @@ static int imagick_oilpaint(lua_State* L)
   return 1;
 }
 
+static int imagick_blur(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  double sigma = luaL_checknumber(L,2);
+  double radius = luaL_checknumber(L,3);
+
+  if (MagickBlurImage(a->m_wand, sigma, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_sharpen(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  double sigma = luaL_checknumber(L,2);
+  double radius = luaL_checknumber(L,3);
+
+  if (MagickSharpenImage(a->m_wand, sigma, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -361,15 +397,13 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"strip",       imagick_strip},
   {"swirl",       imagick_swirl},
   {"oilpaint",    imagick_oilpaint},
+  {"blur",        imagick_blur},
+  {"sharpen",     imagick_sharpen},
 
   /*
     TODO:
 
-    swirl = function(self, degrees)
-    oil_paint = function(self, radius)
     annotate = function(self, color, size, x, y, angle, text)
-    blur = function(self, sigma, radius)
-    sharpen = function(self, sigma, radius)
 
     get_ac = function(self)
 
