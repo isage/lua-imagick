@@ -1,7 +1,7 @@
-Lua G.I. Magick
+Lua IMagick
 ===============
 
-Pure-C lua bindings to Imagemagick and GraphicsMagick
+Pure-C lua bindings to ImageMagick
 
 Table of Contents
 =================
@@ -15,7 +15,7 @@ Table of Contents
 Requirements
 ============
 
-* GraphicksMagick and/or ImageMagick
+* ImageMagick developer headers
 * Lua (5.1/5.2) or LuaJit
 * Cmake 2.8.12 or later
 * Working C compiler
@@ -33,8 +33,8 @@ make install
 ```
 
 You can also use `make unittest` after make to run tests.  
-By default module compiles with support for luajit and grahicksmagick  
-For ImageMagick and other Lua interpreters see cmake options.
+By default module compiles with support for luajit  
+For other Lua interpreters see cmake options.
 
 Authors
 =======
