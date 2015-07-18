@@ -6,20 +6,14 @@
 
 #include <wand/magick_wand.h>
 
-#if defined(USE_IMAGEMAGICK)
 #define IMG_METATABLE "image-im metatable"
-#else
-#define IMG_METATABLE "image-gm metatable"
-// Meh. https://sourceforge.net/p/graphicsmagick/bugs/308/
-extern WandExport GravityType MagickGetImageGravity(MagickWand* wand);
+
+#ifndef IMAGICK_MODNAME
+#define IMAGICK_MODNAME   "imagick"
 #endif
 
-#ifndef GIMAGICK_MODNAME
-#define GIMAGICK_MODNAME   "gimagick"
-#endif
-
-#ifndef GIMAGICK_VERSION
-#define GIMAGICK_VERSION   "1.0"
+#ifndef IMAGICK_VERSION
+#define IMAGICK_VERSION   "1.0"
 #endif
 
 typedef struct {
@@ -35,7 +29,7 @@ static LuaImage* checkimage(lua_State* L)
   return (LuaImage *)ud;
 }
 
-static int gimagick_open(lua_State* L)
+static int imagick_open(lua_State* L)
 {
   const char* path = luaL_checkstring(L, 1);
   
@@ -44,13 +38,11 @@ static int gimagick_open(lua_State* L)
   luaL_getmetatable(L, IMG_METATABLE);
   lua_setmetatable(L, -2);
 
-#if defined(USE_IMAGEMAGICK)
   // init magickwand
   if (IsMagickWandInstantiated() == MagickFalse)
   {
     MagickWandGenesis();
   }
-#endif
 
   a->m_wand = NewMagickWand();
   a->p_wand = NewPixelWand();
@@ -67,18 +59,7 @@ static int gimagick_open(lua_State* L)
   return 1;  /* new userdatum is already on the stack */
 }
 
-int gimagick_api(lua_State* L)
-{
-#if defined(USE_IMAGEMAGICK)
-  lua_pushfstring(L, "im");
-#else
-  lua_pushfstring(L, "gm");
-#endif
-  return 1;
-}
-
-
-static int gimagick_destroy(lua_State* L)
+static int imagick_destroy(lua_State* L)
 {
   LuaImage* a = checkimage(L);
   DestroyMagickWand(a->m_wand);
@@ -87,7 +68,7 @@ static int gimagick_destroy(lua_State* L)
   return 0;
 }
 
-int gimagick_tostring(lua_State* L)
+int imagick_tostring(lua_State* L)
 {
   LuaImage* a = checkimage(L);
   int w = MagickGetImageWidth(a->m_wand);
@@ -98,8 +79,7 @@ int gimagick_tostring(lua_State* L)
   return 1;
 }
 
-
-static int gimagick_width(lua_State* L)
+static int imagick_width(lua_State* L)
 {
   LuaImage *a = checkimage(L);
   int w = MagickGetImageWidth(a->m_wand);
@@ -107,7 +87,7 @@ static int gimagick_width(lua_State* L)
   return 1;
 }
 
-static int gimagick_height(lua_State* L)
+static int imagick_height(lua_State* L)
 {
   LuaImage *a = checkimage(L);
   int h = MagickGetImageHeight(a->m_wand);
@@ -115,7 +95,7 @@ static int gimagick_height(lua_State* L)
   return 1;
 }
 
-static int gimagick_write(lua_State* L)
+static int imagick_write(lua_State* L)
 {
   LuaImage *a = checkimage(L);
   const char* path = luaL_checkstring(L, 2);
@@ -133,7 +113,7 @@ static int gimagick_write(lua_State* L)
   return 1;
 }
 
-static int gimagick_write_all(lua_State* L)
+static int imagick_write_all(lua_State* L)
 {
   LuaImage *a = checkimage(L);
   const char* path = luaL_checkstring(L, 2);
@@ -151,7 +131,7 @@ static int gimagick_write_all(lua_State* L)
   return 1;
 }
 
-static int gimagick_get_format(lua_State* L)
+static int imagick_get_format(lua_State* L)
 {
   LuaImage* a = checkimage(L);
   char* format = MagickGetImageFormat(a->m_wand);
@@ -160,7 +140,7 @@ static int gimagick_get_format(lua_State* L)
   return 1;
 }
 
-static int gimagick_set_format(lua_State* L)
+static int imagick_set_format(lua_State* L)
 {
   LuaImage* a = checkimage(L);
   const char* format = luaL_checkstring(L, 2);
@@ -176,28 +156,21 @@ static int gimagick_set_format(lua_State* L)
   return 1;
 }
 
-static int gimagick_get_quality(lua_State* L)
+static int imagick_get_quality(lua_State* L)
 {
   LuaImage* a = checkimage(L);
-#if defined(USE_IMAGEMAGICK)
+
   size_t quality = MagickGetImageCompressionQuality(a->m_wand);
-#else
-  size_t quality = 75; // Why GM doesn't have this?
-  (void)a->m_wand; // shut up, gcc
-#endif
   lua_pushinteger(L, quality);
   return 1;
 }
 
-static int gimagick_set_quality(lua_State* L)
+static int imagick_set_quality(lua_State* L)
 {
   LuaImage* a = checkimage(L);
   const size_t quality = luaL_checkinteger(L, 2);
-#if defined(USE_IMAGEMAGICK)
+
   if (MagickSetImageCompressionQuality(a->m_wand, quality) != MagickTrue)
-#else
-  if (MagickSetCompressionQuality(a->m_wand, quality) != MagickTrue)
-#endif
   {
     ExceptionType severity;
     char* error=MagickGetException(a->m_wand, &severity);
@@ -209,17 +182,13 @@ static int gimagick_set_quality(lua_State* L)
   return 1;
 }
 
-static int gimagick_blob(lua_State* L)
+static int imagick_blob(lua_State* L)
 {
   size_t length;
 
   LuaImage* a = checkimage(L);
 
-#if defined(USE_IMAGEMAGICK)
   unsigned char* data = MagickGetImageBlob(a->m_wand, &length);
-#else
-  unsigned char* data = MagickWriteImageBlob(a->m_wand, &length);
-#endif
 
   lua_pushlstring(L, (const char*)data, length);
   lua_pushinteger(L, length);
@@ -229,7 +198,7 @@ static int gimagick_blob(lua_State* L)
   return 2;
 }
 
-static int gimagick_get_gravity(lua_State* L)
+static int imagick_get_gravity(lua_State* L)
 {
   LuaImage* a = checkimage(L);
 
@@ -238,7 +207,7 @@ static int gimagick_get_gravity(lua_State* L)
   return 1;
 }
 
-static int gimagick_set_gravity(lua_State* L)
+static int imagick_set_gravity(lua_State* L)
 {
   LuaImage* a = checkimage(L);
   const size_t gravity = luaL_checkinteger(L, 2);
@@ -262,31 +231,25 @@ static int gimagick_set_gravity(lua_State* L)
   return 1;
 }
 
-static int gimagick_get_option(lua_State* L)
+static int imagick_get_option(lua_State* L)
 {
   LuaImage* a = checkimage(L);
   const char* key = luaL_checkstring(L,2);
-#if defined(USE_IMAGEMAGICK)
+
   char* value = MagickGetOption(a->m_wand, key);
   lua_pushstring(L, value);
   MagickRelinquishMemory(value);
-#else
-  (void)a;
-  (void)key;
-  lua_pushstring(L, "unimplemented");
-#endif
   return 1;
 }
 
-static int gimagick_set_option(lua_State* L)
+static int imagick_set_option(lua_State* L)
 {
   LuaImage* a = checkimage(L);
 
-  const char* namespace = luaL_checkstring(L, 2);
-  const char* key = luaL_checkstring(L, 3);
-  const char* value = luaL_checkstring(L, 4);
-#if defined(USE_GRAPHICSMAGICK)
-  if (MagickSetImageOption(a->m_wand, namespace, key, value) != MagickTrue)
+  const char* key = luaL_checkstring(L, 2);
+  const char* value = luaL_checkstring(L, 3);
+
+  if (MagickSetOption(a->m_wand, key, value) != MagickTrue)
   {
     ExceptionType severity;
     char* error=MagickGetException(a->m_wand, &severity);
@@ -296,49 +259,51 @@ static int gimagick_set_option(lua_State* L)
   }
   lua_pushboolean(L, 1);
   return 1;
-#else
-  char fullkey[256];
-  snprintf(fullkey, 255, "%s:%s", namespace, key);
-  if (MagickSetOption(a->m_wand, fullkey, value) != MagickTrue)
-  {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
-  }
-  lua_pushboolean(L, 1);
-  return 1;
-#endif
 }
 
+/*static int imagick_optimize(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
 
-static const struct luaL_Reg gimagicklib_f[] = {
-  {"open", gimagick_open},
-  {"api", gimagick_api},
+  if (MagickOptimizeImageLayers(a->m_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}*/
+
+
+static const struct luaL_Reg imagicklib_f[] = {
+  {"open", imagick_open},
   {NULL, NULL}
 };
 
-static const struct luaL_Reg gimagicklib_meta[] = {
-  {"__tostring", gimagick_tostring},
-  {"__gc",       gimagick_destroy},
+static const struct luaL_Reg imagicklib_meta[] = {
+  {"__tostring", imagick_tostring},
+  {"__gc",       imagick_destroy},
   {NULL, NULL}
 };
 
-static const struct luaL_Reg gimagicklib_m[] = {
-  {"width",       gimagick_width},
-  {"height",      gimagick_height},
-  {"write",       gimagick_write},
-  {"write_all",   gimagick_write_all},
-  {"get_format",  gimagick_get_format},
-  {"set_format",  gimagick_set_format},
-  {"get_quality", gimagick_get_quality},
-  {"set_quality", gimagick_set_quality},
-  {"blob",        gimagick_blob},
-  {"get_gravity", gimagick_get_gravity},
-  {"set_gravity", gimagick_set_gravity},
-  {"get_option",  gimagick_get_option},
-  {"set_option",  gimagick_set_option},
+static const struct luaL_Reg imagicklib_m[] = {
+  {"width",       imagick_width},
+  {"height",      imagick_height},
+  {"write",       imagick_write},
+  {"write_all",   imagick_write_all},
+  {"get_format",  imagick_get_format},
+  {"set_format",  imagick_set_format},
+  {"get_quality", imagick_get_quality},
+  {"set_quality", imagick_set_quality},
+  {"blob",        imagick_blob},
+  {"get_gravity", imagick_get_gravity},
+  {"set_gravity", imagick_set_gravity},
+  {"get_option",  imagick_get_option},
+  {"set_option",  imagick_set_option},
+//  {"optimize",    imagick_optimize},
 
   /*
     TODO:
@@ -393,21 +358,21 @@ void maketable(lua_State* L, const char* t, char** ar, size_t size)
 }
 
 
-int luaopen_gimagick(lua_State* L)
+int luaopen_imagick(lua_State* L)
 {
   // image "class"
   luaL_newmetatable(L, IMG_METATABLE);
 #if LUA_VERSION_NUM >= 502
-  luaL_setfuncs(L, gimagicklib_meta , 0);
+  luaL_setfuncs(L, imagicklib_meta , 0);
 #else
-  luaL_register(L, NULL, gimagicklib_meta);
+  luaL_register(L, NULL, imagicklib_meta);
 #endif
 
   lua_newtable(L);
 #if LUA_VERSION_NUM >= 502
-  luaL_setfuncs(L, gimagicklib_m , 0);
+  luaL_setfuncs(L, imagicklib_m , 0);
 #else
-  luaL_register(L, NULL, gimagicklib_m);
+  luaL_register(L, NULL, imagicklib_m);
 #endif
 
   lua_setfield(L, -2, "__index");
@@ -415,14 +380,14 @@ int luaopen_gimagick(lua_State* L)
   // gimagick "class"
   lua_newtable(L);
 #if LUA_VERSION_NUM >= 502
-  luaL_setfuncs(L, gimagicklib_f , 0);
+  luaL_setfuncs(L, imagicklib_f , 0);
 #else
-  luaL_register(L, NULL, gimagicklib_f);
+  luaL_register(L, NULL, imagicklib_f);
 #endif
 
-  lua_pushliteral(L, GIMAGICK_MODNAME);
+  lua_pushliteral(L, IMAGICK_MODNAME);
   lua_setfield(L, -2, "_NAME");
-  lua_pushliteral(L, GIMAGICK_VERSION);
+  lua_pushliteral(L, IMAGICK_VERSION);
   lua_setfield(L, -2, "_VERSION");
 
   // enums
@@ -444,8 +409,6 @@ int luaopen_gimagick(lua_State* L)
   maketable(L, "gravity", gravity, 11);
 
   // colorspace
-#if defined(USE_IMAGEMAGICK)
-
   char* colorspace[] = {
     "UndefinedColorspace",
     "RGBColorspace",            /* Linear RGB colorspace */
@@ -484,37 +447,7 @@ int luaopen_gimagick(lua_State* L)
   };
   maketable(L, "colorspace", colorspace, 34);
 
-#else
-
-  char* colorspace[] = {
-    "UndefinedColorspace",
-    "RGBColorspace",         /* Plain old RGB colorspace */
-    "GRAYColorspace",        /* Plain old full-range grayscale */
-    "TransparentColorspace", /* RGB but preserve matte channel during quantize */
-    "OHTAColorspace",
-    "XYZColorspace",         /* CIE XYZ */
-    "YCCColorspace",         /* Kodak PhotoCD PhotoYCC */
-    "YIQColorspace",
-    "YPbPrColorspace",
-    "YUVColorspace",
-    "CMYKColorspace",        /* Cyan, magenta, yellow, black, alpha */
-    "sRGBColorspace",        /* Kodak PhotoCD sRGB */
-    "HSLColorspace",         /* Hue, saturation, luminosity */
-    "HWBColorspace",         /* Hue, whiteness, blackness */
-    "LABColorspace",         /* LAB colorspace not supported yet other than via lcms */
-    "CineonLogRGBColorspace",/* RGB data with Cineon Log scaling, 2.048 density range */
-    "Rec601LumaColorspace",  /* Luma (Y) according to ITU-R 601 */
-    "Rec601YCbCrColorspace", /* YCbCr according to ITU-R 601 */
-    "Rec709LumaColorspace",  /* Luma (Y) according to ITU-R 709 */
-    "Rec709YCbCrColorspace"
-  };
-  maketable(L, "colorspace", colorspace, 20);
-
-#endif
-
   // filters
-#if defined(USE_IMAGEMAGICK)
-
   char* filters[] = {
     "UndefinedFilter",
     "PointFilter",
@@ -551,33 +484,7 @@ int luaopen_gimagick(lua_State* L)
   };
   maketable(L, "filters", filters, 32);
 
-#else
-
-  char* filters[] = {
-    "UndefinedFilter",
-    "PointFilter",
-    "BoxFilter",
-    "TriangleFilter",
-    "HermiteFilter",
-    "HanningFilter",
-    "HammingFilter",
-    "BlackmanFilter",
-    "GaussianFilter",
-    "QuadraticFilter",
-    "CubicFilter",
-    "CatromFilter",
-    "MitchellFilter",
-    "LanczosFilter",
-    "BesselFilter",
-    "SincFilter"
-  };
-  maketable(L, "filters", filters, 16);
-
-#endif
-
   // composite operation
-#if defined(USE_IMAGEMAGICK)
-
   char* composite_op[] = {
     "UndefinedCompositeOp",
     "NoCompositeOp",
@@ -649,71 +556,5 @@ int luaopen_gimagick(lua_State* L)
     "LightenIntensityCompositeOp"
   };
   maketable(L, "composite_op", composite_op, 68);
-
-#else
-
-  char* composite_op[] = {
-    "UndefinedCompositeOp",
-    "OverCompositeOp",
-    "InCompositeOp",
-    "OutCompositeOp",
-    "AtopCompositeOp",
-    "XorCompositeOp",
-    "PlusCompositeOp",
-    "MinusCompositeOp",
-    "AddCompositeOp",
-    "SubtractCompositeOp",
-    "DifferenceCompositeOp",
-    "MultiplyCompositeOp",
-    "BumpmapCompositeOp",
-    "CopyCompositeOp",
-    "CopyRedCompositeOp",
-    "CopyGreenCompositeOp",
-    "CopyBlueCompositeOp",
-    "CopyOpacityCompositeOp",
-    "ClearCompositeOp",
-    "DissolveCompositeOp",
-    "DisplaceCompositeOp",
-    "ModulateCompositeOp",
-    "ThresholdCompositeOp",
-    "NoCompositeOp",
-    "DarkenCompositeOp",
-    "LightenCompositeOp",
-    "HueCompositeOp",
-    "SaturateCompositeOp",
-    "ColorizeCompositeOp",
-    "LuminizeCompositeOp",
-    "ScreenCompositeOp",
-    "OverlayCompositeOp",
-    "CopyCyanCompositeOp",
-    "CopyMagentaCompositeOp",
-    "CopyYellowCompositeOp",
-    "CopyBlackCompositeOp",
-    "DivideCompositeOp",
-    "HardLightCompositeOp",
-    "ExclusionCompositeOp",
-    "ColorDodgeCompositeOp",
-    "ColorBurnCompositeOp",
-    "SoftLightCompositeOp",
-    "LinearBurnCompositeOp",
-    "LinearDodgeCompositeOp",
-    "LinearLightCompositeOp",
-    "VividLightCompositeOp",
-    "PinLightCompositeOp",
-    "HardMixCompositeOp"
-  };
-  maketable(L, "composite_op", composite_op, 48);
-
-#endif
   return 1;
-}
-
-int luaopen_gimagick_im(lua_State* L)
-{
-    return luaopen_gimagick(L);
-}
-
-int luaopen_gimagick_gm(lua_State* L)
-{
-    return luaopen_gimagick(L);
 }
