@@ -96,6 +96,12 @@ TestIM = {}
         luaunit.assertTrue(img:has_alphachannel())
     end
 
+    function TestIM:test13_GetICCProfile()
+        local img, err = self.ima.open("input.cmyk.jpg")
+        luaunit.assertNotNil(img)
+        local blob, len = img:get_icc_profile()
+        luaunit.assertEquals(len, 1829077)
+    end
 
 os.exit( luaunit.LuaUnit.run() )
 

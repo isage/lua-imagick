@@ -403,6 +403,20 @@ static int imagick_has_alphachannel(lua_State* L)
   return 1;
 }
 
+static int imagick_get_icc_profile(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  size_t length;
+  unsigned char* data = MagickGetImageProfile(a->m_wand, "ICC", &length);
+
+  lua_pushlstring(L, (const char*)data, length);
+  lua_pushinteger(L, length);
+
+  MagickRelinquishMemory(data);
+
+  return 2;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -438,6 +452,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"sharpen",           imagick_sharpen},
   {"get_colorspace",    imagick_get_colorspace},
   {"has_alphachannel",  imagick_has_alphachannel},
+  {"get_icc_profile",   imagick_get_icc_profile},
 
   /*
     TODO:
