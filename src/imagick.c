@@ -299,6 +299,38 @@ static int imagick_strip(lua_State* L)
   return 1;
 }
 
+static int imagick_swirl(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  double degrees = luaL_checknumber(L,2);
+  if (MagickSwirlImage(a->m_wand, degrees) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_oilpaint(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  double radius = luaL_checknumber(L,2);
+  if (MagickOilPaintImage(a->m_wand, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -327,11 +359,12 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"set_option",  imagick_set_option},
   {"optimize",    imagick_optimize},
   {"strip",       imagick_strip},
+  {"swirl",       imagick_swirl},
+  {"oilpaint",    imagick_oilpaint},
 
   /*
     TODO:
 
-    strip = function(self)
     swirl = function(self, degrees)
     oil_paint = function(self, radius)
     annotate = function(self, color, size, x, y, angle, text)
