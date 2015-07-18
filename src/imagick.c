@@ -261,11 +261,19 @@ static int imagick_set_option(lua_State* L)
   return 1;
 }
 
-/*static int imagick_optimize(lua_State* L)
+static int imagick_optimize(lua_State* L)
 {
   LuaImage* a = checkimage(L);
 
-  if (MagickOptimizeImageLayers(a->m_wand) != MagickTrue)
+  MagickWand* tempwand;
+  if ((tempwand=MagickOptimizeImageLayers(a->m_wand)) != NULL)
+  {
+    DestroyMagickWand(a->m_wand);
+    a->m_wand = tempwand;
+    lua_pushboolean(L, 1);
+    return 1;
+  }
+  else
   {
     ExceptionType severity;
     char* error=MagickGetException(a->m_wand, &severity);
@@ -273,9 +281,7 @@ static int imagick_set_option(lua_State* L)
     lua_pushstring(L, error);
     return 2;
   }
-  lua_pushboolean(L, 1);
-  return 1;
-}*/
+}
 
 
 static const struct luaL_Reg imagicklib_f[] = {
@@ -303,7 +309,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"set_gravity", imagick_set_gravity},
   {"get_option",  imagick_get_option},
   {"set_option",  imagick_set_option},
-//  {"optimize",    imagick_optimize},
+  {"optimize",    imagick_optimize},
 
   /*
     TODO:
