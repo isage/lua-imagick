@@ -283,6 +283,22 @@ static int imagick_optimize(lua_State* L)
   }
 }
 
+static int imagick_strip(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+
+  if (MagickStripImage(a->m_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -310,6 +326,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"get_option",  imagick_get_option},
   {"set_option",  imagick_set_option},
   {"optimize",    imagick_optimize},
+  {"strip",       imagick_strip},
 
   /*
     TODO:
