@@ -103,5 +103,12 @@ TestIM = {}
         luaunit.assertEquals(len, 1829077)
     end
 
+    function TestIM:test14_GetBGColor()
+        local img, err = self.ima.open("input.jpg")
+        luaunit.assertNotNil(img)
+        local color = img:get_bg_color()
+        luaunit.assertEquals(color, "1,1,1")
+    end
+
 os.exit( luaunit.LuaUnit.run() )
 

@@ -436,6 +436,75 @@ static int imagick_set_icc_profile(lua_State* L)
   return 1;
 }
 
+static int imagick_set_compose(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  int compose = luaL_checkinteger(L, 2);
+
+  if (MagickSetImageCompose(a->m_wand, compose) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_set_bg_color(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  const char* color = luaL_checkstring(L, 2);
+
+  PixelSetColor(a->p_wand, color);
+  char* format = MagickGetImageFormat(a->m_wand);
+
+  if (!strcmp(format, "gif"))
+  {
+    MagickResetIterator(a->m_wand);
+    while (MagickNextImage(a->m_wand) == 1)
+    {
+      if (MagickSetImageBackgroundColor(a->m_wand, a->p_wand) != MagickTrue)
+      {
+        ExceptionType severity;
+        char* error=MagickGetException(a->m_wand, &severity);
+        lua_pushboolean(L, 0);
+        lua_pushstring(L, error);
+        return 2;
+      }
+    }
+    MagickResetIterator(a->m_wand);
+  }
+  else
+  {
+    if (MagickSetImageBackgroundColor(a->m_wand, a->p_wand) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      return 2;
+    }
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_get_bg_color(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+
+  MagickGetImageBackgroundColor(a->m_wand, a->p_wand);
+  char* color = PixelGetColorAsNormalizedString(a->p_wand);
+  lua_pushstring(L, color);
+  MagickRelinquishMemory(color);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -473,15 +542,14 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"has_alphachannel",  imagick_has_alphachannel},
   {"get_icc_profile",   imagick_get_icc_profile},
   {"set_icc_profile",   imagick_set_icc_profile},
+  {"set_compose",       imagick_set_compose},
+  {"set_bg_color",      imagick_set_bg_color},
+  {"get_bg_color",      imagick_get_bg_color},
 
   /*
     TODO:
 
     annotate = function(self, color, size, x, y, angle, text)
-
-    set_color = function(self, color)
-    get_color = function(self)
-    get_alpha = function(self)
 
     smart_resize = function(self, sizestr)
     resize = function(self, w, h, f, blur)
@@ -491,11 +559,6 @@ static const struct luaL_Reg imagicklib_m[] = {
     extent = function(self, w, h)
 
     composite = function(self, blob, x, y, opstr)
-    set_compose = function(self, opstr)
-
-    color_profile = function(self)
-    apply_color_profile = function(self, path)
-    reprofile = function(self)
 
     get_pixel = function(self, x, y)
 
