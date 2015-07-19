@@ -631,7 +631,111 @@ static int imagick_annotate(lua_State* L)
   if (MagickAnnotateImage(a->m_wand, a->d_wand, x, y, angle, text) != MagickTrue)
   {
     ExceptionType severity;
-    char* error=DrawGetException(a->d_wand, &severity);
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_resize(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  size_t w = luaL_checkinteger(L, 2);
+  size_t h = luaL_checkinteger(L, 3);
+
+  FilterTypes filter = luaL_optinteger(L, 4, LanczosFilter);
+  double blur = luaL_optnumber(L, 5, 1.0);
+
+  if (MagickResizeImage(a->m_wand, w, h, filter, blur) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_adaptive_resize(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  size_t w = luaL_checkinteger(L, 2);
+  size_t h = luaL_checkinteger(L, 3);
+
+  if (MagickAdaptiveResizeImage(a->m_wand, w, h) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_resample(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  size_t w = luaL_checkinteger(L, 2);
+  size_t h = luaL_checkinteger(L, 3);
+
+  FilterTypes filter = luaL_optinteger(L, 4, LanczosFilter);
+  double blur = luaL_optnumber(L, 5, 1.0);
+
+  if (MagickResampleImage(a->m_wand, w, h, filter, blur) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_scale(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  size_t w = luaL_checkinteger(L, 2);
+  size_t h = luaL_checkinteger(L, 3);
+
+  if (MagickScaleImage(a->m_wand, w, h) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_crop(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  size_t w = luaL_checkinteger(L, 2);
+  size_t h = luaL_checkinteger(L, 3);
+
+  size_t x = luaL_optinteger(L, 4, 0);
+  size_t y = luaL_optnumber(L, 5, 0);
+
+  if (MagickCropImage(a->m_wand, w, h, x, y) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
     lua_pushboolean(L, 0);
     lua_pushstring(L, error);
     return 2;
@@ -689,6 +793,11 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"set_font_weight",   imagick_set_font_weight},
   {"set_font_align",    imagick_set_font_align},
   {"annotate",          imagick_annotate},
+  {"resize",            imagick_resize},
+  {"adaptive_resize",   imagick_adaptive_resize},
+  {"resample",          imagick_resample},
+  {"scale",             imagick_scale},
+  {"crop",              imagick_crop},
 
   /*
     TODO:
