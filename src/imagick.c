@@ -536,6 +536,86 @@ static int imagick_get_bg_color(lua_State* L)
   return 1;
 }
 
+static int imagick_set_font(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  const char* font = luaL_checkstring(L, 2);
+
+  if (DrawSetFont(a->d_wand, font) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=DrawGetException(a->d_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_set_font_family(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  const char* font = luaL_checkstring(L, 2);
+
+  if (DrawSetFontFamily(a->d_wand, font) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=DrawGetException(a->d_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_set_font_size(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  double size = luaL_checknumber(L, 2);
+
+  DrawSetFontSize(a->d_wand, size);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_set_font_style(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  int style = luaL_checkinteger(L, 2);
+
+  DrawSetFontStyle(a->d_wand, style);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_set_font_weight(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  int weight = luaL_checkinteger(L, 2);
+
+  DrawSetFontWeight(a->d_wand, weight);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_set_font_align(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  int align = luaL_checkinteger(L, 2);
+
+  DrawSetTextAlignment(a->d_wand, align);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -577,6 +657,12 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"set_compose",       imagick_set_compose},
   {"set_bg_color",      imagick_set_bg_color},
   {"get_bg_color",      imagick_get_bg_color},
+  {"set_font",          imagick_set_font},
+  {"set_font_family",   imagick_set_font_family},
+  {"set_font_size",     imagick_set_font_size},
+  {"set_font_style",    imagick_set_font_style},
+  {"set_font_weight",   imagick_set_font_weight},
+  {"set_font_align",    imagick_set_font_align},
 
   /*
     TODO:
@@ -810,5 +896,25 @@ int luaopen_imagick(lua_State* L)
     "LightenIntensityCompositeOp"
   };
   maketable(L, "composite_op", composite_op, 68);
+
+  // font style
+  char* font_style[] = {
+    "UndefinedStyle",
+    "NormalStyle",
+    "ItalicStyle",
+    "ObliqueStyle",
+    "AnyStyle"
+  };
+  maketable(L, "font_style", font_style, 5);
+
+  // text align
+  char* text_align[] = {
+    "UndefinedAlign",
+    "LeftAlign",
+    "CenterAlign",
+    "RightAlign"
+  };
+  maketable(L, "text_align", text_align, 4);
+
   return 1;
 }
