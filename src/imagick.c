@@ -59,6 +59,37 @@ static int imagick_open(lua_State* L)
   return 1;  /* new userdatum is already on the stack */
 }
 
+static int imagick_open_blob(lua_State* L)
+{
+  size_t length;
+  const char* data = luaL_checklstring(L, 1, &length);
+
+  LuaImage* a = (LuaImage* )lua_newuserdata(L, sizeof(LuaImage));
+
+  luaL_getmetatable(L, IMG_METATABLE);
+  lua_setmetatable(L, -2);
+
+  // init magickwand
+  if (IsMagickWandInstantiated() == MagickFalse)
+  {
+    MagickWandGenesis();
+  }
+
+  a->m_wand = NewMagickWand();
+  a->p_wand = NewPixelWand();
+  a->d_wand = NewDrawingWand();
+  if (MagickReadImageBlob(a->m_wand, data, length) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushnil(L);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  return 1;  /* new userdatum is already on the stack */
+}
+
 static int imagick_destroy(lua_State* L)
 {
   LuaImage* a = checkimage(L);
@@ -508,6 +539,7 @@ static int imagick_get_bg_color(lua_State* L)
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
+  {"open_blob", imagick_open_blob},
   {NULL, NULL}
 };
 
