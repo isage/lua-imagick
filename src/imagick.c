@@ -616,6 +616,31 @@ static int imagick_set_font_align(lua_State* L)
   return 1;
 }
 
+static int imagick_annotate(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  const char* color = luaL_checkstring(L, 2);
+  const char* text = luaL_checkstring(L, 3);
+  double x = luaL_checknumber(L, 4);
+  double y = luaL_checknumber(L, 5);
+  double angle = luaL_optnumber(L, 6, 0);
+
+  PixelSetColor(a->p_wand, color);
+  DrawSetFillColor(a->d_wand, a->p_wand);
+
+  if (MagickAnnotateImage(a->m_wand, a->d_wand, x, y, angle, text) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=DrawGetException(a->d_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -663,6 +688,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"set_font_style",    imagick_set_font_style},
   {"set_font_weight",   imagick_set_font_weight},
   {"set_font_align",    imagick_set_font_align},
+  {"annotate",          imagick_annotate},
 
   /*
     TODO:
