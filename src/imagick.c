@@ -745,6 +745,25 @@ static int imagick_crop(lua_State* L)
   return 1;
 }
 
+static int imagick_thumbnail(lua_State* L)
+{
+  LuaImage* a = checkimage(L);
+  size_t w = luaL_checkinteger(L, 2);
+  size_t h = luaL_checkinteger(L, 3);
+
+  if (MagickThumbnailImage(a->m_wand, w, h) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -798,22 +817,15 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"resample",          imagick_resample},
   {"scale",             imagick_scale},
   {"crop",              imagick_crop},
+  {"thumbnail",         imagick_thumbnail},
 
   /*
     TODO:
 
-    annotate = function(self, color, size, x, y, angle, text)
-
     smart_resize = function(self, sizestr)
-    resize = function(self, w, h, f, blur)
-    adaptive_resize = function(self, w, h)
-    scale = function(self, w, h)
-    crop = function(self, w, h, x, y)
     extent = function(self, w, h)
 
     composite = function(self, blob, x, y, opstr)
-
-    get_pixel = function(self, x, y)
 
 */
   {NULL, NULL}
