@@ -799,6 +799,37 @@ static int imagick_composite(lua_State* L)
   return 1;
 }
 
+static int imagick_extent(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  size_t w = luaL_checkinteger(L, 2);
+  size_t h = luaL_checkinteger(L, 3);
+
+  // This is needed because IM ignores geometry settings, duh
+  RectangleInfo geometry;
+  SetGeometry(GetImageFromMagickWand(a->m_wand), &geometry);
+  geometry.width = w;
+  geometry.height = h;
+  GravityAdjustGeometry(MagickGetImageWidth(a->m_wand), MagickGetImageHeight(a->m_wand) , MagickGetImageGravity(a->m_wand), &geometry);
+
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
+  {
+    if (MagickExtentImage(a->m_wand, geometry.width, geometry.height, geometry.x, geometry.y) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      return 2;
+    }
+  }
+  MagickResetIterator(a->m_wand);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -854,16 +885,12 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"crop",              imagick_crop},
   {"thumbnail",         imagick_thumbnail},
   {"composite",         imagick_composite},
+  {"extent",            imagick_extent},
 
   /*
     TODO:
-
     smart_resize = function(self, sizestr)
-    extent = function(self, w, h)
-
-    composite = function(self, blob, x, y, opstr)
-
-*/
+  */
   {NULL, NULL}
 };
 
