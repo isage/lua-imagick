@@ -18,6 +18,7 @@ find_path(LUA_INCLUDE_DIR luajit.h
   /opt/local # DarwinPorts
   /opt/csw # Blastwave
   /opt
+  /usr/local/openresty/luajit/ # openresty
 )
 
 find_library(LUA_LIBRARY
@@ -32,6 +33,7 @@ find_library(LUA_LIBRARY
   /opt/local
   /opt/csw
   /opt
+  /usr/local/openresty/luajit/ # openresty
 )
 
 if(LUA_LIBRARY)
