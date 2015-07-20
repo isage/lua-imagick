@@ -830,6 +830,125 @@ static int imagick_extent(lua_State* L)
   return 1;
 }
 
+void _parse_size_str(const char* size_str, size_t sw, size_t sh, size_t* w, size_t* h)
+{
+  short unsigned int expand = 0;
+  short unsigned int ignore = 0;
+
+  char lastchar = size_str[strlen(size_str)-1];
+
+  int nw = 0;
+  int nh = 0;
+  int scanned = 0;
+
+  if (lastchar < '0' || lastchar > '9') //not int
+  {
+    switch (lastchar)
+    {
+      case '!':
+        ignore = 1;
+        break;
+      case '^':
+        expand = 1;
+        break;
+      default: //error
+        *w=*h=0;
+        return;
+        break;
+    }
+    scanned = sscanf(size_str, "%dx%d%*c", &nw, &nh);
+  }
+  else
+  {
+    scanned = sscanf(size_str, "%dx%d", &nw, &nh);
+  }
+
+  if (nw == 0 || nh == 0 || scanned != 2) //error
+  {
+    *w=*h=0;
+    return;
+  }
+
+  if (ignore)
+  {
+    *w = nw;
+    *h = nh;
+    return;
+  }
+
+  double x_ratio = nw / sw;
+  double y_ratio = nh / sh;
+
+  if (expand) // "fill" given area
+  {
+    if (x_ratio > y_ratio)
+    {
+      nh = sh * x_ratio;
+    }
+    else
+    {
+      nw = sw * y_ratio;
+    }
+  }
+  else
+  {
+    if (x_ratio < y_ratio)
+    {
+      nh = sh * x_ratio;
+    }
+    else
+    {
+      nw = sw * y_ratio;
+    }
+  }
+
+  *w = nw;
+  *h = nh;
+
+  return;
+}
+
+static int imagick_smart_resize(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* size_str = luaL_checkstring(L, 2);
+
+  FilterTypes filter = LanczosFilter; // downscale for jpg
+  double blur = 1.0;
+
+  size_t w;
+  size_t h;
+
+  size_t sw = MagickGetImageWidth(a->m_wand);
+  size_t sh = MagickGetImageHeight(a->m_wand);
+
+  char* format = MagickGetImageFormat(a->m_wand);
+
+  _parse_size_str(size_str, sw, sh, &w, &h);
+
+  if (!!strcmp(format, "JPEG") || (w > sw) || (h > sh)) // if upscaling jpg or resizing any other format
+  {
+    filter = MitchellFilter;
+  }
+
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
+  {
+    if (MagickResizeImage(a->m_wand, w, h, filter, blur) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      return 2;
+    }
+  }
+  MagickResetIterator(a->m_wand);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -886,11 +1005,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"thumbnail",         imagick_thumbnail},
   {"composite",         imagick_composite},
   {"extent",            imagick_extent},
-
-  /*
-    TODO:
-    smart_resize = function(self, sizestr)
-  */
+  {"smart_resize",      imagick_smart_resize},
   {NULL, NULL}
 };
 
