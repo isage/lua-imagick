@@ -876,8 +876,8 @@ void _parse_size_str(const char* size_str, size_t sw, size_t sh, size_t* w, size
     return;
   }
 
-  double x_ratio = nw / sw;
-  double y_ratio = nh / sh;
+  double x_ratio = (double)nw / (double)sw;
+  double y_ratio = (double)nh / (double)sh;
 
   if (expand) // "fill" given area
   {
