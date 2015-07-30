@@ -448,6 +448,18 @@ static int imagick_get_icc_profile(lua_State* L)
   return 2;
 }
 
+static int imagick_has_icc_profile(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  size_t length;
+  char** data = MagickGetImageProfiles(a->m_wand, "icc", &length);
+
+  lua_pushboolean(L, (length>0));
+  MagickRelinquishMemory(data);
+
+  return 1;
+}
+
 static int imagick_set_icc_profile(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -986,6 +998,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"get_colorspace",    imagick_get_colorspace},
   {"has_alphachannel",  imagick_has_alphachannel},
   {"get_icc_profile",   imagick_get_icc_profile},
+  {"has_icc_profile",   imagick_has_icc_profile},
   {"set_icc_profile",   imagick_set_icc_profile},
   {"set_compose",       imagick_set_compose},
   {"set_bg_color",      imagick_set_bg_color},

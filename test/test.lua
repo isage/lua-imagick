@@ -103,7 +103,13 @@ TestIM = {}
         luaunit.assertEquals(len, 1829077)
     end
 
-    function TestIM:test14_GetBGColor()
+    function TestIM:test14_HasICCProfile()
+        local img, err = self.ima.open("input.cmyk.jpg")
+        luaunit.assertNotNil(img)
+        luaunit.assertTrue(img:has_icc_profile())
+    end
+
+    function TestIM:test15_GetBGColor()
         local img, err = self.ima.open("input.jpg")
         luaunit.assertNotNil(img)
         local color = img:get_bg_color()
