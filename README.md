@@ -23,7 +23,7 @@ Because existing FFI-based bindings are hackish and buggy, duh.
    A) Yes, we're using it for couple of months now without problems.
 3. Q) Is this feature-complete?  
    A) Hell no. There's lot of uncovered IM api. I've implemented only needed for me api for now.
-4. Q) How do i properly resize animated gif?
+4. Q) How do i properly resize animated gif?  
    A) Firstly, coalesce() it, then resize as usual, then optimize() it back. You really should cache coalesce()'ed image if you resizing it frequently.
 
 ##Requirements
@@ -69,7 +69,7 @@ img:write("out.jpg")
 ####imagick.gravity
 
 Gravity values  
-See [http://www.imagemagick.org/api/MagickCore/geometry_8h.html#afd1e527b17eba5305ea949fa7c717069](http://www.imagemagick.org/api/MagickCore/geometry_8h.html#afd1e527b17eba5305ea949fa7c717069)  
+See [here](http://www.imagemagick.org/api/MagickCore/geometry_8h.html#afd1e527b17eba5305ea949fa7c717069)  
 Example  
 ```lua
 local magick = require "imagick"
@@ -79,7 +79,7 @@ print(magick.gravity["WestGravity"])
 ####imagick.colorspace
 
 Colorspace values  
-See [http://www.imagemagick.org/api/MagickCore/colorspace_8h.html#a5d516b430fa42c1f83b557f08128f3c2](http://www.imagemagick.org/api/MagickCore/colorspace_8h.html#a5d516b430fa42c1f83b557f08128f3c2)  
+See [here](http://www.imagemagick.org/api/MagickCore/colorspace_8h.html#a5d516b430fa42c1f83b557f08128f3c2)  
 
 Example  
 ```lua
@@ -90,7 +90,7 @@ print(magick.colorspace["YUVColorspace"])
 ####imagick.filters
 
 Scale filters  
-See [http://www.imagemagick.org/api/MagickCore/resample_8h.html#a12be80da7313b1cc5a7e1061c0c108ea](http://www.imagemagick.org/api/MagickCore/resample_8h.html#a12be80da7313b1cc5a7e1061c0c108ea)  
+See [here](http://www.imagemagick.org/api/MagickCore/resample_8h.html#a12be80da7313b1cc5a7e1061c0c108ea)  
 
 Example  
 ```lua
@@ -101,7 +101,7 @@ print(magick.filters["LanczosSharpFilter"])
 ####imagick.composite_op
 
 Composite operations  
-See [http://www.imagemagick.org/api/MagickCore/composite_8h.html#a55ded0ef54def8597243db2375b987fb](http://www.imagemagick.org/api/MagickCore/composite_8h.html#a55ded0ef54def8597243db2375b987fb)  
+See [here](http://www.imagemagick.org/api/MagickCore/composite_8h.html#a55ded0ef54def8597243db2375b987fb)  
 
 Example  
 ```lua
@@ -145,9 +145,13 @@ or
 local img = magick.open("xc:rgb(255,0,0)") -- open empty red image
 ```
 
+******
+
 ####`<image>image, <string>error = imagick.open_blob(<string> data)`
 
 Open image from data blob
+
+******
 
 ###imagick image functions
 
@@ -155,14 +159,20 @@ Open image from data blob
 
 Get image width in pixels
 
+******
+
 ####`<int>height =  img:height()`
 
 Get image height in pixels
+
+******
 
 ####`<bool>status, <string>error = img:write(<string> filename)`
 
 Write image to file  
 _This outputs only first frame_
+
+******
 
 ####`<bool>status, <string>error = img:write_all(<string> filename,  <bool> join)`
 
@@ -170,163 +180,242 @@ Write all image frames to file
 If **join** is **false** this will create sequentaly numbered file for each image frame
 If **join** is **true** this will create one file with all frames (this demends on image format, works with gif, for example)
 
+******
+
 ####`<string>data, <int>lenght = img:blob()`
 
 Return raw image data as string
+
+******
 
 ####`<string>format = img:get_format()`
 
 Get image format ("JPEG"/"GIF"/"PNG"/etc.)
 
+******
+
 ####`<bool>result, <string>error = img:set_format(<string> format)`
 
 Set image format ("JPEG"/"GIF"/"PNG"/etc.)
+
+******
 
 ####`<int>quality = img:get_quality()`
 
 Get image compression quality (0-100)
 
+******
+
 ####`<bool>status, <string>error = img:set_quality(<int> quality)`
 
 Set image compression quality (0-100)
+
+******
 
 ####`<int>gravity = img:get_gravity()`
 
 Get current image gravity
 
+******
+
 ####`<bool>status, <string>error = img:set_gravity(<int> gravity)`
 
 Set image gravity (See imagick.gravity enum)
+
+******
 
 ####`<string>value = img:get_option(<string> name)`
 
 Get imagemagick option for image
 
+******
+
 ####`<bool>status, <string>error = img:set_option(<string> name, <string>value)`
 
 Set imagemagick option for image
+
+******
 
 ####`<string>color = img:get_bg_color()`
 
 Get image background color  
 Returns comma-separated color values.
 
+******
+
 ####`<bool>status, <string>error = img:set_bg_color(<string> color)`
 
 Set image background color (html hex notation or comma-separated)
 
+******
 
 ####`<int>colorspace = img:get_colorspace()`
 
 Get image colorspace (See imagick.colorspace enum)
 
+******
+
 ####`<bool>alpha = img:has_alphachannel()`
 
 Returns true if image has alpha-channel
+
+******
 
 ####`<bool>icc = img:has_icc_profile()`
 
 Returns true if image has embedded icc profile
 
+******
+
 ####`<string>data = img:get_icc_profile()`
 
 Returns image icc profile as blob
+
+******
 
 ####`<bool>status, <string>error = img:set_icc_profile(<string> blob)`
 
 Set (and convert image to) image icc profile from blob
 
+******
+
 ####`<bool>status, <string>error = img:set_compose(<int> compose)`
 
 Set image composite operator (See imagick.composite_op)
+
+******
 
 ####`<bool>status, <string>error = img:set_font(<string> path)`
 
 Set font to use in annotate, full path to font file
 
+******
+
 ####`<bool>status, <string>error = img:set_font_family(<string> family)`
 
 Set font to use in annotate, font family string
+
+******
 
 ####`<bool>status, <string>error = img:set_font_size(<int> size)`
   
 Set font size to use in annotate
 
+******
+
 ####`<bool>status, <string>error = img:set_font_style(<int> style)`
   
 Set font style to use in annotate (See imagick.font_style enum)
+
+******
 
 ####`<bool>status, <string>error = img:set_font_weight(<int> weight)`
 
 Set font weight to use in annotate
 
+******
+
 ####`<bool>status, <string>error = img:set_font_align(<int> align)`
 
 Set font align to use in annotate (See imagick.font_align enum)
+
+******
 
 ####`<bool>status, <string>error = img:annotate(<string> color, <string> text, <int> x, <int> y, <int> angle)`
 
 Annotate image 
 
+******
+
 ####`<bool>status, <string>error = img:coalesce()`
 
 Coalesce (rebuild) all image frames
+
+******
 
 ####`<bool>status, <string>error = img:optimize()`
 
 Optimise all image frames
 
+******
+
 ####`<bool>status, <string>error = img:strip()`
 
 Strip exif data and profiles from image
+
+******
 
 ####`<bool>status, <string>error = img:swirl(<int>degrees)`
 
 Apply swirl filter
 
+******
+
 ####`<bool>status, <string>error = img:oilpaint(<int> radius)`
   
 Apply oilpaint filter
+
+******
 
 ####`<bool>status, <string>error = img:blur(<int> sigma, <int> radius)`
 
 Blur image
 
+******
+
 ####`<bool>status, <string>error = img:sharpen(<int> sigma, <int> radius)`
 
 Sharpen image
+
+******
 
 ####`<bool>status, <string>error = img:resize(<int>width, <int> height)`
 
 Resize image using current scale filter
 
+******
+
 ####`<bool>status, <string>error = img:adaptive_resize(<int>width, <int> height)`
 
 Adaptively resize image with data dependent triangulation using current image filter
+
+******
 
 ####`<bool>status, <string>error = img:resample(<int>width, <int> height, <int> filter, <double> blur)`
 
 Resample image. See [http://www.imagemagick.org/api/magick-image.php#MagickResampleImage](http://www.imagemagick.org/api/magick-image.php#MagickResampleImage)
 
+******
+
 ####`<bool>status, <string>error = img:scale(<int> width, <int> height)`
 
 Fast scale image 
+
+******
 
 ####`<bool>status, <string>error = img:crop(<int> width, <int> height)`
 
 Crop image
 
+******
+
 ####`<bool>status, <string>error = img:thumbnail(<int> width, <int> height)`
 
 Resize image and remove all profiles.
+
+******
 
 ####`<bool>status, <string>error = img:composite(<image> src, <int> x, <int> y, <int> compositeop)`
 
 Apply one image on top of another at x/y with composite operator compositeop (See imagick.composite_op)
 
+******
+
 ####`<bool>status, <string>error = img:extent(<int> width, <int> height)`
 
 Extent image
+
+******
 
 ####`<bool>status, <string>error = img:smart_resize(<string> size)`
 
@@ -340,6 +429,7 @@ It uses Mitchell filter for upscaling/downscaling all formats and Lanczos for do
 
 You should use img:extent after it to really crop or add borders (with `img:get_bg_color()`) to image.
 
+******
 
 ##Authors
 
