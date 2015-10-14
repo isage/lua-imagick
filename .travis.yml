@@ -9,8 +9,7 @@ before_install:
   - bash .travis_setup.sh
 
 install:
-  - sudo add-apt-repository --yes ppa:smspillaz/cmake-2.8.12
-  - sudo add-apt-repository --yes ppa:evl.ms/evil
+  - sudo add-apt-repository --yes ppa:isage-dna/imagick
   - sudo apt-get update -qq
   - sudo apt-get install cmake cmake-data libmagickcore-dev libmagickwand-dev
 
