@@ -28,10 +28,12 @@ Because existing FFI-based bindings are hackish and buggy, duh.
 
 ##Requirements
 
-* ImageMagick developer headers
+* ImageMagick developer headers (>=6.8.8.3)
 * Lua (5.1/5.2) or LuaJit
 * Cmake 2.8.12 or later
 * Working C compiler
+
+You can get fresh IM and cmake for ubuntu 12.04/14.04 [here](https://launchpad.net/~isage-dna/+archive/ubuntu/imagick/)
 
 ##Installation
 
