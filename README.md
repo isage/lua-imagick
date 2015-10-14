@@ -1,4 +1,4 @@
-#Lua IMagick ![travis ci build](https://travis-ci.org/isage/lua-imagick.svg?branch=master "travis ci build")
+#Lua IMagick [![Build Status](https://travis-ci.org/isage/lua-imagick.svg?branch=master)](https://travis-ci.org/isage/lua-imagick)
 
 Pure-C lua bindings to ImageMagick
 
