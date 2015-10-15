@@ -420,6 +420,118 @@ static int imagick_sharpen(lua_State* L)
   return 1;
 }
 
+static int imagick_adaptive_blur(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  double sigma = luaL_checknumber(L,2);
+  double radius = luaL_checknumber(L,3);
+
+  if (MagickAdaptiveBlurImage(a->m_wand, sigma, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_adaptive_sharpen(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  double sigma = luaL_checknumber(L,2);
+  double radius = luaL_checknumber(L,3);
+
+  if (MagickAdaptiveSharpenImage(a->m_wand, sigma, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_blur_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  int chan = luaL_checkinteger(L,2);
+  double sigma = luaL_checknumber(L,3);
+  double radius = luaL_checknumber(L,4);
+
+  if (MagickBlurImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_sharpen_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  int chan = luaL_checkinteger(L,2);
+  double sigma = luaL_checknumber(L,3);
+  double radius = luaL_checknumber(L,4);
+
+  if (MagickSharpenImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_adaptive_blur_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  int chan = luaL_checkinteger(L,2);
+  double sigma = luaL_checknumber(L,3);
+  double radius = luaL_checknumber(L,4);
+
+  if (MagickAdaptiveBlurImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_adaptive_sharpen_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  int chan = luaL_checkinteger(L,2);
+  double sigma = luaL_checknumber(L,3);
+  double radius = luaL_checknumber(L,4);
+
+  if (MagickAdaptiveSharpenImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 static int imagick_get_colorspace(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -975,53 +1087,63 @@ static const struct luaL_Reg imagicklib_meta[] = {
 };
 
 static const struct luaL_Reg imagicklib_m[] = {
-  {"width",             imagick_width},
-  {"height",            imagick_height},
-  {"write",             imagick_write},
-  {"write_all",         imagick_write_all},
-  {"get_format",        imagick_get_format},
-  {"set_format",        imagick_set_format},
-  {"get_quality",       imagick_get_quality},
-  {"set_quality",       imagick_set_quality},
-  {"blob",              imagick_blob},
-  {"get_gravity",       imagick_get_gravity},
-  {"set_gravity",       imagick_set_gravity},
-  {"get_option",        imagick_get_option},
-  {"set_option",        imagick_set_option},
-  {"coalesce",          imagick_coalesce},
-  {"optimize",          imagick_optimize},
-  {"strip",             imagick_strip},
-  {"swirl",             imagick_swirl},
-  {"oilpaint",          imagick_oilpaint},
-  {"blur",              imagick_blur},
-  {"sharpen",           imagick_sharpen},
-  {"get_colorspace",    imagick_get_colorspace},
-  {"has_alphachannel",  imagick_has_alphachannel},
-  {"get_icc_profile",   imagick_get_icc_profile},
-  {"has_icc_profile",   imagick_has_icc_profile},
-  {"set_icc_profile",   imagick_set_icc_profile},
-  {"set_compose",       imagick_set_compose},
-  {"set_bg_color",      imagick_set_bg_color},
-  {"get_bg_color",      imagick_get_bg_color},
-  {"set_font",          imagick_set_font},
-  {"set_font_family",   imagick_set_font_family},
-  {"set_font_size",     imagick_set_font_size},
-  {"set_font_style",    imagick_set_font_style},
-  {"set_font_weight",   imagick_set_font_weight},
-  {"set_font_align",    imagick_set_font_align},
-  {"annotate",          imagick_annotate},
-  {"resize",            imagick_resize},
-  {"adaptive_resize",   imagick_adaptive_resize},
-  {"resample",          imagick_resample},
-  {"scale",             imagick_scale},
-  {"crop",              imagick_crop},
-  {"thumbnail",         imagick_thumbnail},
-  {"composite",         imagick_composite},
-  {"extent",            imagick_extent},
-  {"smart_resize",      imagick_smart_resize},
+  {"width",                           imagick_width},
+  {"height",                          imagick_height},
+  {"write",                           imagick_write},
+  {"write_all",                       imagick_write_all},
+  {"get_format",                      imagick_get_format},
+  {"set_format",                      imagick_set_format},
+  {"get_quality",                     imagick_get_quality},
+  {"set_quality",                     imagick_set_quality},
+  {"blob",                            imagick_blob},
+  {"get_gravity",                     imagick_get_gravity},
+  {"set_gravity",                     imagick_set_gravity},
+  {"get_option",                      imagick_get_option},
+  {"set_option",                      imagick_set_option},
+  {"coalesce",                        imagick_coalesce},
+  {"optimize",                        imagick_optimize},
+  {"strip",                           imagick_strip},
+  {"swirl",                           imagick_swirl},
+  {"oilpaint",                        imagick_oilpaint},
+  {"blur",                            imagick_blur},
+  {"sharpen",                         imagick_sharpen},
+  {"adaptive_blur",                   imagick_adaptive_blur},
+  {"adaptive_sharpen",                imagick_adaptive_sharpen},
+  {"blur_channel",                    imagick_blur_channel},
+  {"sharpen_channel",                 imagick_sharpen_channel},
+  {"adaptive_blur_channel",           imagick_adaptive_blur_channel},
+  {"adaptive_sharpen_channel",        imagick_adaptive_sharpen_channel},
+  {"get_colorspace",                  imagick_get_colorspace},
+  {"has_alphachannel",                imagick_has_alphachannel},
+  {"get_icc_profile",                 imagick_get_icc_profile},
+  {"has_icc_profile",                 imagick_has_icc_profile},
+  {"set_icc_profile",                 imagick_set_icc_profile},
+  {"set_compose",                     imagick_set_compose},
+  {"set_bg_color",                    imagick_set_bg_color},
+  {"get_bg_color",                    imagick_get_bg_color},
+  {"set_font",                        imagick_set_font},
+  {"set_font_family",                 imagick_set_font_family},
+  {"set_font_size",                   imagick_set_font_size},
+  {"set_font_style",                  imagick_set_font_style},
+  {"set_font_weight",                 imagick_set_font_weight},
+  {"set_font_align",                  imagick_set_font_align},
+  {"annotate",                        imagick_annotate},
+  {"resize",                          imagick_resize},
+  {"adaptive_resize",                 imagick_adaptive_resize},
+  {"resample",                        imagick_resample},
+  {"scale",                           imagick_scale},
+  {"crop",                            imagick_crop},
+  {"thumbnail",                       imagick_thumbnail},
+  {"composite",                       imagick_composite},
+  {"extent",                          imagick_extent},
+  {"smart_resize",                    imagick_smart_resize},
   {NULL, NULL}
 };
 
+typedef struct {
+  char* name;
+  int value;
+} tentry;
 
 void maketable(lua_State* L, const char* t, char** ar, size_t size)
 {
@@ -1034,7 +1156,6 @@ void maketable(lua_State* L, const char* t, char** ar, size_t size)
   }
   lua_setfield(L, -2, t);
 }
-
 
 int luaopen_imagick(lua_State* L)
 {
@@ -1253,6 +1374,40 @@ int luaopen_imagick(lua_State* L)
     "RightAlign"
   };
   maketable(L, "text_align", text_align, 4);
+
+  // color channels
+  lua_newtable(L);
+  lua_pushnumber(L, 0);
+  lua_setfield(L, -2, "UndefinedChannel");
+  lua_pushnumber(L, 0x0001);
+  lua_setfield(L, -2, "RedChannel");
+  lua_pushnumber(L, 0x0001);
+  lua_setfield(L, -2, "GrayChannel");
+  lua_pushnumber(L, 0x0001);
+  lua_setfield(L, -2, "CyanChannel");
+  lua_pushnumber(L, 0x0002);
+  lua_setfield(L, -2, "GreenChannel");
+  lua_pushnumber(L, 0x0002);
+  lua_setfield(L, -2, "MagentaChannel");
+  lua_pushnumber(L, 0x0004);
+  lua_setfield(L, -2, "BlueChannel");
+  lua_pushnumber(L, 0x0004);
+  lua_setfield(L, -2, "YellowChannel");
+  lua_pushnumber(L, 0x0008);
+  lua_setfield(L, -2, "AlphaChannel");
+  lua_pushnumber(L, 0x0008);
+  lua_setfield(L, -2, "OpacityChannel");
+  lua_pushnumber(L, 0x0008);
+  lua_setfield(L, -2, "MatteChannel");
+  lua_pushnumber(L, 0x0020);
+  lua_setfield(L, -2, "BlackChannel");
+  lua_pushnumber(L, 0x0020);
+  lua_setfield(L, -2, "IndexChannel");
+  lua_pushnumber(L, 0x002F);
+  lua_setfield(L, -2, "CompositeChannels");
+  lua_pushnumber(L, 0x7ffffff);
+  lua_setfield(L, -2, "AllChannels");
+  lua_setfield(L, -2, "channel");
 
   return 1;
 }

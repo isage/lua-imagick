@@ -134,6 +134,11 @@ Font align
 * CenterAlign
 * RightAlign
 
+####imagick.channel
+
+Color channels  
+See [here](http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType)
+
 ###imagick functions
 
 ####`<image>image, <string>error = imagick.open(<string> filepath)`
@@ -368,6 +373,42 @@ Blur image
 ####`<bool>status, <string>error = img:sharpen(<int> sigma, <int> radius)`
 
 Sharpen image
+
+******
+
+####`<bool>status, <string>error = img:adaptive_blur(<int> sigma, <int> radius)`
+
+Blur image adaptively
+
+******
+
+####`<bool>status, <string>error = img:adaptive_sharpen(<int> sigma, <int> radius)`
+
+Sharpen image adaptively
+
+******
+
+####`<bool>status, <string>error = img:blur_channel(<channel> channel, <int> sigma, <int> radius)`
+
+Blur image channel
+
+******
+
+####`<bool>status, <string>error = img:sharpen_channel(<channel> channel, <int> sigma, <int> radius)`
+
+Sharpen image channel
+
+******
+
+####`<bool>status, <string>error = img:adaptive_blur_channel(<channel> channel, <int> sigma, <int> radius)`
+
+Blur image channel adaptively
+
+******
+
+####`<bool>status, <string>error = img:adaptive_sharpen_channel(<channel> channel, <int> sigma, <int> radius)`
+
+Sharpen image channel adaptively
 
 ******
 
