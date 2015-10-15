@@ -359,8 +359,14 @@ Apply swirl filter
 ******
 
 ####`<bool>status, <string>error = img:oilpaint(<int> radius)`
-  
+
 Apply oilpaint filter
+
+******
+
+####`<bool>status, <string>error = img:rotate(<string>color, <double> angle)`
+
+Rotate image on angle filling empty space with color
 
 ******
 

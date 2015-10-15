@@ -1073,6 +1073,27 @@ static int imagick_smart_resize(lua_State* L)
   return 1;
 }
 
+static int imagick_rotate(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* color = luaL_checkstring(L, 2);
+  double angle = luaL_optnumber(L, 3, 0);
+
+  PixelSetColor(a->p_wand, color);
+
+  if (MagickRotateImage(a->m_wand, a->p_wand, angle) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1137,6 +1158,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"composite",                       imagick_composite},
   {"extent",                          imagick_extent},
   {"smart_resize",                    imagick_smart_resize},
+  {"rotate",                          imagick_rotate},
   {NULL, NULL}
 };
 
