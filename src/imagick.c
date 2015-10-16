@@ -1162,11 +1162,6 @@ static const struct luaL_Reg imagicklib_m[] = {
   {NULL, NULL}
 };
 
-typedef struct {
-  char* name;
-  int value;
-} tentry;
-
 void maketable(lua_State* L, const char* t, char** ar, size_t size)
 {
   lua_newtable(L);
