@@ -1219,6 +1219,39 @@ static int imagick_contrast(lua_State* L)
   return 1;
 }
 
+static int imagick_colorize(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* color = luaL_checkstring(L, 2);
+  double opacity = luaL_checknumber(L,3);
+
+  PixelWand* colorize = NewPixelWand();
+  PixelWand* alpha = NewPixelWand();
+
+  PixelSetColor(colorize, color);
+  // oh god why
+  PixelSetRed(alpha, opacity);
+  PixelSetGreen(alpha, opacity);
+  PixelSetBlue(alpha, opacity);
+  PixelSetOpacity(alpha, opacity);
+
+  if (MagickColorizeImage(a->m_wand, colorize, alpha) != MagickTrue)
+  {
+    DestroyPixelWand(colorize);
+    DestroyPixelWand(alpha);
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  DestroyPixelWand(colorize);
+  DestroyPixelWand(alpha);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1289,6 +1322,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"gamma",                           imagick_gamma},
   {"gamma_channel",                   imagick_gamma_channel},
   {"contrast",                        imagick_contrast},
+  {"colorize",                        imagick_colorize},
   {NULL, NULL}
 };
 

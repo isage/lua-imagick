@@ -449,6 +449,12 @@ Set sharpen to 'true' to increase the image contrast, otherwise the contrast is 
 
 ******
 
+####`<bool>status, <string>error = img:colorize(<string> color, <double> opacity)`
+
+Blends the fill color with each pixel in the image
+
+******
+
 ####`<bool>status, <string>error = img:resize(<int>width, <int> height)`
 
 Resize image using current scale filter
