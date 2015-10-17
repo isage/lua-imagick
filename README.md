@@ -180,6 +180,12 @@ Get image height in pixels
 
 ******
 
+####`<image>image =  img:clone()`
+
+Clone image with all current settings/values
+
+******
+
 ####`<bool>status, <string>error = img:write(<string> filename)`
 
 Write image to file  

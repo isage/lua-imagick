@@ -132,6 +132,22 @@ static int imagick_open_pseudo(lua_State* L)
   return 1;  /* new userdatum is already on the stack */
 }
 
+static int imagick_clone(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  LuaImage* b = (LuaImage* )lua_newuserdata(L, sizeof(LuaImage));
+
+  luaL_getmetatable(L, IMG_METATABLE);
+  lua_setmetatable(L, -2);
+
+  b->m_wand = CloneMagickWand(a->m_wand);
+  b->p_wand = ClonePixelWand(a->p_wand);
+  b->d_wand = CloneDrawingWand(a->d_wand);
+
+  return 1;  /* new userdatum is already on the stack */
+}
+
 static int imagick_destroy(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1298,6 +1314,7 @@ static const struct luaL_Reg imagicklib_meta[] = {
 };
 
 static const struct luaL_Reg imagicklib_m[] = {
+  {"clone",                           imagick_clone},
   {"width",                           imagick_width},
   {"height",                          imagick_height},
   {"write",                           imagick_write},
