@@ -286,6 +286,12 @@ Get image colorspace (See imagick.colorspace enum)
 
 ******
 
+####`<bool>status, <string>error = img:set_colorspace(<colorspace> colorspace)`
+
+Set image colorspace (See imagick.colorspace enum)
+
+******
+
 ####`<bool>alpha = img:has_alphachannel()`
 
 Returns true if image has alpha-channel

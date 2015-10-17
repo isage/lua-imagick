@@ -628,6 +628,24 @@ static int imagick_get_colorspace(lua_State* L)
   return 1;
 }
 
+static int imagick_set_colorspace(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const int colorspace = luaL_checkinteger(L,2);
+
+  if (MagickSetImageColorspace(a->m_wand, colorspace) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+
 static int imagick_has_alphachannel(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1299,6 +1317,41 @@ static int imagick_colorize(lua_State* L)
   return 1;
 }
 
+static int imagick_negate(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const int gray = lua_toboolean(L,2);
+
+  if (MagickNegateImage(a->m_wand, gray) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_negate_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const int gray = lua_toboolean(L,2);
+  const int chan = luaL_checkinteger(L,3);
+
+  if (MagickNegateImageChannel(a->m_wand, chan, gray) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1344,6 +1397,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"adaptive_blur_channel",           imagick_adaptive_blur_channel},
   {"adaptive_sharpen_channel",        imagick_adaptive_sharpen_channel},
   {"get_colorspace",                  imagick_get_colorspace},
+  {"set_colorspace",                  imagick_set_colorspace},
   {"has_alphachannel",                imagick_has_alphachannel},
   {"get_icc_profile",                 imagick_get_icc_profile},
   {"has_icc_profile",                 imagick_has_icc_profile},
@@ -1373,6 +1427,8 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"gamma_channel",                   imagick_gamma_channel},
   {"contrast",                        imagick_contrast},
   {"colorize",                        imagick_colorize},
+  {"negate",                          imagick_negate},
+  {"negate_channel",                  imagick_negate_channel},
   {NULL, NULL}
 };
 
