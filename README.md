@@ -442,6 +442,13 @@ Modify image channel gamma
 
 ******
 
+####`<bool>status, <string>error = img:contrast(<bool> sharpen)`
+
+Enhances the intensity differences between the lighter and darker elements of the image.  
+Set sharpen to 'true' to increase the image contrast, otherwise the contrast is reduced
+
+******
+
 ####`<bool>status, <string>error = img:resize(<int>width, <int> height)`
 
 Resize image using current scale filter

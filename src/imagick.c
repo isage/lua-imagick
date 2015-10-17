@@ -1192,6 +1192,23 @@ static int imagick_gamma_channel(lua_State* L)
   return 1;
 }
 
+static int imagick_contrast(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const int sharpen = lua_toboolean(L, 2);
+
+  if (MagickContrastImage(a->m_wand, sharpen) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1261,6 +1278,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"modulate",                        imagick_modulate},
   {"gamma",                           imagick_gamma},
   {"gamma_channel",                   imagick_gamma_channel},
+  {"contrast",                        imagick_contrast},
   {NULL, NULL}
 };
 
