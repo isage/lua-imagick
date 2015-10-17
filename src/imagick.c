@@ -90,6 +90,48 @@ static int imagick_open_blob(lua_State* L)
   return 1;  /* new userdatum is already on the stack */
 }
 
+static int imagick_open_pseudo(lua_State* L)
+{
+  int width = luaL_checkinteger(L, 1);
+  int height = luaL_checkinteger(L, 2);
+  const char* data = luaL_checkstring(L, 3);
+
+  LuaImage* a = (LuaImage* )lua_newuserdata(L, sizeof(LuaImage));
+
+  luaL_getmetatable(L, IMG_METATABLE);
+  lua_setmetatable(L, -2);
+
+  // init magickwand
+  if (IsMagickWandInstantiated() == MagickFalse)
+  {
+    MagickWandGenesis();
+  }
+
+  a->m_wand = NewMagickWand();
+  a->p_wand = NewPixelWand();
+  a->d_wand = NewDrawingWand();
+
+  if (MagickSetSize(a->m_wand, width, height) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushnil(L);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  if (MagickReadImage(a->m_wand, data) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushnil(L);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  return 1;  /* new userdatum is already on the stack */
+}
+
 static int imagick_destroy(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1098,6 +1140,7 @@ static int imagick_rotate(lua_State* L)
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
   {"open_blob", imagick_open_blob},
+  {"open_pseudo", imagick_open_pseudo},
   {NULL, NULL}
 };
 

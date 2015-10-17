@@ -160,6 +160,12 @@ Open image from data blob
 
 ******
 
+####`<image>image, <string>error = imagick.open_pseudo(<int> width, <int> height, <string> definition)`
+
+Create image from pseudo-image definition. See [here](http://www.imagemagick.org/script/formats.php#pseudo)
+
+******
+
 ###imagick image functions
 
 ####`<int>width =  img:width()`
