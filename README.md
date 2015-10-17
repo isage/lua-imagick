@@ -376,6 +376,12 @@ Rotate image on angle filling empty space with color
 
 ******
 
+####`<bool>status, <string>error = img:modulate(<double> brightness, <double> saturation, <double> hue)`
+
+Modify brightness, saturation, and hue of an image
+
+******
+
 ####`<bool>status, <string>error = img:blur(<int> sigma, <int> radius)`
 
 Blur image
