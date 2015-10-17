@@ -902,6 +902,16 @@ static int imagick_crop(lua_State* L)
   size_t x = luaL_optinteger(L, 4, 0);
   size_t y = luaL_optnumber(L, 5, 0);
 
+  RectangleInfo geometry;
+  SetGeometry(GetImageFromMagickWand(a->m_wand), &geometry);
+  geometry.width = w;
+  geometry.height = h;
+  geometry.x = x;
+  geometry.y = x;
+  GravityAdjustGeometry(MagickGetImageWidth(a->m_wand), MagickGetImageHeight(a->m_wand) , MagickGetImageGravity(a->m_wand), &geometry);
+  x = geometry.x;
+  y = geometry.y;
+
   MagickResetIterator(a->m_wand);
   while (MagickNextImage(a->m_wand) == 1)
   {
