@@ -364,6 +364,13 @@ Annotate image
 
 ******
 
+####`<bool>status, <string>error = img:set_mask(<image> mask)`
+
+Set image mask for compositing operations
+You can set it to `nil` to reset
+
+******
+
 ####`<bool>status, <string>error = img:coalesce()`
 
 Coalesce (rebuild) all image frames
@@ -518,6 +525,12 @@ Resize image and remove all profiles.
 ####`<bool>status, <string>error = img:composite(<image> src, <int> x, <int> y, <int> compositeop)`
 
 Apply one image on top of another at x/y with composite operator compositeop (See imagick.composite_op)
+
+******
+
+####`<bool>status, <string>error = img:composite_channel(<image> src, <channel> channel, <int> x, <int> y, <int> compositeop)`
+
+Apply one image channel on top of another at x/y with composite operator compositeop (See imagick.composite_op)
 
 ******
 

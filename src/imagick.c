@@ -1040,6 +1040,28 @@ static int imagick_composite(lua_State* L)
   return 1;
 }
 
+static int imagick_composite_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  LuaImage* b = checkimage(L, 2);
+  int chan = luaL_checkinteger(L, 3);
+  size_t x = luaL_checkinteger(L, 4);
+  size_t y = luaL_checkinteger(L, 5);
+  CompositeOperator op = luaL_optinteger(L, 5, OverCompositeOp);
+
+  if (MagickCompositeImageChannel(a->m_wand, chan, b->m_wand, op, x, y) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 static int imagick_extent(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1352,6 +1374,23 @@ static int imagick_negate_channel(lua_State* L)
   return 1;
 }
 
+static int imagick_set_mask(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  LuaImage* b = checkimage(L, 1);
+
+  if (SetImageMask(GetImageFromMagickWand(a->m_wand), GetImageFromMagickWand(b->m_wand)) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1419,6 +1458,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"crop",                            imagick_crop},
   {"thumbnail",                       imagick_thumbnail},
   {"composite",                       imagick_composite},
+  {"composite_channel",               imagick_composite_channel},
   {"extent",                          imagick_extent},
   {"smart_resize",                    imagick_smart_resize},
   {"rotate",                          imagick_rotate},
@@ -1429,6 +1469,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"colorize",                        imagick_colorize},
   {"negate",                          imagick_negate},
   {"negate_channel",                  imagick_negate_channel},
+  {"set_mask",                        imagick_set_mask},
   {NULL, NULL}
 };
 
