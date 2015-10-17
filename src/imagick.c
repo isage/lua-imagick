@@ -334,6 +334,37 @@ static int imagick_set_option(lua_State* L)
   return 1;
 }
 
+static int imagick_get_artifact(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* key = luaL_checkstring(L,2);
+
+  char* value = MagickGetImageArtifact(a->m_wand, key);
+  lua_pushstring(L, value);
+  MagickRelinquishMemory(value);
+  return 1;
+}
+
+static int imagick_set_artifact(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  const char* key = luaL_checkstring(L, 2);
+  const char* value = luaL_checkstring(L, 3);
+
+  if (MagickSetImageArtifact(a->m_wand, key, value) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+
 static int imagick_coalesce(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1280,6 +1311,8 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"set_gravity",                     imagick_set_gravity},
   {"get_option",                      imagick_get_option},
   {"set_option",                      imagick_set_option},
+  {"get_artifact",                    imagick_get_artifact},
+  {"set_artifact",                    imagick_set_artifact},
   {"coalesce",                        imagick_coalesce},
   {"optimize",                        imagick_optimize},
   {"strip",                           imagick_strip},

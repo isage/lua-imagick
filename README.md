@@ -249,6 +249,18 @@ Set imagemagick option for image
 
 ******
 
+####`<string>value = img:get_artifact(<string> name)`
+
+Get imagemagick artifact for image. See [here](http://www.imagemagick.org/script/command-line-options.php#define)
+
+******
+
+####`<bool>status, <string>error = img:set_artifact(<string> name, <string>value)`
+
+Set imagemagick artifact for image
+
+******
+
 ####`<string>color = img:get_bg_color()`
 
 Get image background color  
