@@ -382,51 +382,63 @@ Modify brightness, saturation, and hue of an image
 
 ******
 
-####`<bool>status, <string>error = img:blur(<int> sigma, <int> radius)`
+####`<bool>status, <string>error = img:blur(<double> sigma, <double> radius)`
 
 Blur image
 
 ******
 
-####`<bool>status, <string>error = img:sharpen(<int> sigma, <int> radius)`
+####`<bool>status, <string>error = img:sharpen(<double> sigma, <double> radius)`
 
 Sharpen image
 
 ******
 
-####`<bool>status, <string>error = img:adaptive_blur(<int> sigma, <int> radius)`
+####`<bool>status, <string>error = img:adaptive_blur(<double> sigma, <double> radius)`
 
 Blur image adaptively
 
 ******
 
-####`<bool>status, <string>error = img:adaptive_sharpen(<int> sigma, <int> radius)`
+####`<bool>status, <string>error = img:adaptive_sharpen(<double> sigma, <double> radius)`
 
 Sharpen image adaptively
 
 ******
 
-####`<bool>status, <string>error = img:blur_channel(<channel> channel, <int> sigma, <int> radius)`
+####`<bool>status, <string>error = img:blur_channel(<channel> channel, <double> sigma, <double> radius)`
 
 Blur image channel
 
 ******
 
-####`<bool>status, <string>error = img:sharpen_channel(<channel> channel, <int> sigma, <int> radius)`
+####`<bool>status, <string>error = img:sharpen_channel(<channel> channel, <double> sigma, <double> radius)`
 
 Sharpen image channel
 
 ******
 
-####`<bool>status, <string>error = img:adaptive_blur_channel(<channel> channel, <int> sigma, <int> radius)`
+####`<bool>status, <string>error = img:adaptive_blur_channel(<channel> channel, <double> sigma, <double> radius)`
 
 Blur image channel adaptively
 
 ******
 
-####`<bool>status, <string>error = img:adaptive_sharpen_channel(<channel> channel, <int> sigma, <int> radius)`
+####`<bool>status, <string>error = img:adaptive_sharpen_channel(<channel> channel, <double> sigma, <double> radius)`
 
 Sharpen image channel adaptively
+
+******
+
+####`<bool>status, <string>error = img:gamma(<double> gamma)`
+
+Modify image gamma
+
+******
+
+####`<bool>status, <string>error = img:gamma_channel(<double> gamma, <channel> channel)`
+
+Modify image channel gamma
 
 ******
 

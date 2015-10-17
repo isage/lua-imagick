@@ -1157,6 +1157,42 @@ static int imagick_modulate(lua_State* L)
 }
 
 
+static int imagick_gamma(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  double gamma = luaL_checknumber(L,2);
+
+  if (MagickGammaImage(a->m_wand, gamma) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_gamma_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  double gamma = luaL_checknumber(L,2);
+  int chan = luaL_checkinteger(L,3);
+
+  if (MagickGammaImageChannel(a->m_wand, chan, gamma) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
   {"open_blob", imagick_open_blob},
@@ -1223,6 +1259,8 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"smart_resize",                    imagick_smart_resize},
   {"rotate",                          imagick_rotate},
   {"modulate",                        imagick_modulate},
+  {"gamma",                           imagick_gamma},
+  {"gamma_channel",                   imagick_gamma_channel},
   {NULL, NULL}
 };
 
