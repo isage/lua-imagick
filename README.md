@@ -473,6 +473,18 @@ Modify image channel gamma
 
 ******
 
+####`<bool>status, <string>error = img:auto_gamma()`
+
+Auto-adjust image gamma
+
+******
+
+####`<bool>status, <string>error = img:auto_gamma_channel(<channel> channel)`
+
+Auto-adjust image channel gamma
+
+******
+
 ####`<bool>status, <string>error = img:contrast(<bool> sharpen)`
 
 Enhances the intensity differences between the lighter and darker elements of the image.  

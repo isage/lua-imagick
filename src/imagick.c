@@ -1289,6 +1289,39 @@ static int imagick_gamma_channel(lua_State* L)
   return 1;
 }
 
+static int imagick_auto_gamma(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  if (MagickAutoGammaImage(a->m_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_auto_gamma_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  int chan = luaL_checkinteger(L,2);
+
+  if (MagickAutoGammaImageChannel(a->m_wand, chan) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 static int imagick_contrast(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1465,6 +1498,8 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"modulate",                        imagick_modulate},
   {"gamma",                           imagick_gamma},
   {"gamma_channel",                   imagick_gamma_channel},
+  {"auto_gamma",                      imagick_auto_gamma},
+  {"auto_gamma_channel",              imagick_auto_gamma_channel},
   {"contrast",                        imagick_contrast},
   {"colorize",                        imagick_colorize},
   {"negate",                          imagick_negate},
