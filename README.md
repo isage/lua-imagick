@@ -485,6 +485,18 @@ Auto-adjust image channel gamma
 
 ******
 
+####`<bool>status, <string>error = img:level(<double> black, <double> white, <double> gamma)`
+
+Adjust image levels. Black/white points is 0-100%
+
+******
+
+####`<bool>status, <string>error = img:level_channel(<double> black, <double> white, <double> gamma, <channel> channel)`
+
+Adjust image levels for channel. Black/white points is 0-100%
+
+******
+
 ####`<bool>status, <string>error = img:contrast(<bool> sharpen)`
 
 Enhances the intensity differences between the lighter and darker elements of the image.  

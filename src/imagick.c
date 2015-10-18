@@ -1449,6 +1449,50 @@ static int imagick_border(lua_State* L)
   return 1;
 }
 
+static int imagick_level(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  double black = luaL_checknumber(L,2);
+  double white = luaL_checknumber(L,3);
+  double gamma = luaL_checknumber(L,4);
+
+  if (MagickLevelImage(a->m_wand, black, gamma, white) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_level_channel(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  double black = luaL_checknumber(L,2);
+  double white = luaL_checknumber(L,3);
+  double gamma = luaL_checknumber(L,4);
+  const int chan = luaL_checkinteger(L,5);
+
+  size_t range;
+  MagickGetQuantumRange(&range);
+  black *= (double)range/100;
+  white *= (double)range/100;
+
+  if (MagickLevelImageChannel(a->m_wand, chan, black, gamma, white) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1531,6 +1575,8 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"negate_channel",                  imagick_negate_channel},
   {"set_mask",                        imagick_set_mask},
   {"border",                          imagick_border},
+  {"level",                           imagick_level},
+  {"level_channel",                   imagick_level_channel},
   {NULL, NULL}
 };
 
