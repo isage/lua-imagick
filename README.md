@@ -12,6 +12,7 @@ Because existing FFI-based bindings are hackish and buggy, duh.
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
+* [Examples](#examples)
 * [Authors](#authors)
 * [Copyright and License](#copyright-and-license)
 
@@ -583,6 +584,80 @@ It uses Mitchell filter for upscaling/downscaling all formats and Lanczos for do
 You should use img:extent after it to really crop or add borders (with `img:get_bg_color()`) to image.
 
 ******
+
+##Examples
+
+###Captcha
+```lua
+local magick = require "imagick"
+
+local code ="hello"
+
+local i = 0
+math.randomseed(os.time())
+local r=100+math.random(35)
+local g=100+math.random(35)
+local b=100+math.random(35)
+
+
+local img = assert(magick.open_pseudo(150,50, "xc:rgb("..r..","..g..","..b..")"))
+
+for c in code:gmatch(".") do
+  local r=150+math.random(105)
+  local g=150+math.random(105)
+  local b=150+math.random(105)
+  img:set_font_size(25+math.random(10))
+  img:annotate("rgb("..r..","..g..","..b..")", c, (i*20)+10, math.random(50-50)+30, math.random(55)-20)
+  i=i+1
+end
+
+img:swirl(10)
+img:oilpaint(1)
+img:write("captcha.png")
+
+```
+
+###Simple filters
+
+####Gotham
+```lua
+local ima = require("imagick")
+
+local img, err = ima.open("input.jpg")
+img:modulate(120, 10 ,100)
+img:colorize("#222b6d", 0.2)
+img:gamma(0.5)
+img:contrast(true)
+img:contrast(true)
+img:border('black', 20, 20)
+
+img:write("out.jpg")
+
+```
+
+####Lomo
+```lua
+local ima = require("imagick")
+
+local img, err = ima.open("input.jpg")
+img:level_channel(33, 66, 1.0, ima.channel["RedChannel"])
+img:level_channel(33, 66, 1.0, ima.channel["GreenChannel"])
+
+crop_x = math.floor(img:width() * 1.5)
+crop_y = math.floor(img:height() * 1.5)
+
+local gradient = ima.open_pseudo(crop_x, crop_y, "radial-gradient:none-black")
+
+gradient:set_gravity(ima.gravity['CenterGravity'])
+gradient:crop(img:width(), img:height())
+img:composite(gradient, 0, 0, ima.composite_op['MultiplyCompositeOp'])
+
+img:border('black', 20, 20)
+
+img:write("out.jpg")
+
+```
+
 
 ##Authors
 
