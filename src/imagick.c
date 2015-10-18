@@ -1424,6 +1424,31 @@ static int imagick_set_mask(lua_State* L)
   return 1;
 }
 
+static int imagick_border(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* color = luaL_checkstring(L, 2);
+  const size_t width = luaL_checkinteger(L,3);
+  const size_t height = luaL_checkinteger(L,4);
+
+  PixelWand* color_wand = NewPixelWand();
+
+  PixelSetColor(color_wand, color);
+
+  if (MagickBorderImage(a->m_wand, color_wand, width, height) != MagickTrue)
+  {
+    DestroyPixelWand(color_wand);
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  DestroyPixelWand(color_wand);
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1505,6 +1530,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"negate",                          imagick_negate},
   {"negate_channel",                  imagick_negate_channel},
   {"set_mask",                        imagick_set_mask},
+  {"border",                          imagick_border},
   {NULL, NULL}
 };
 

@@ -492,6 +492,12 @@ Set sharpen to 'true' to increase the image contrast, otherwise the contrast is 
 
 ******
 
+####`<bool>status, <string>error = img:border(<strinng> color, <int> width, <int> height)`
+
+Surrounds the image with a border of the color
+
+******
+
 ####`<bool>status, <string>error = img:colorize(<string> color, <double> opacity)`
 
 Blends the fill color with each pixel in the image
