@@ -277,7 +277,7 @@ static int imagick_blob(lua_State* L)
 
   LuaImage* a = checkimage(L, 1);
 
-  unsigned char* data = MagickGetImageBlob(a->m_wand, &length);
+  unsigned char* data = MagickGetImagesBlob(a->m_wand, &length);
 
   lua_pushlstring(L, (const char*)data, length);
   lua_pushinteger(L, length);
