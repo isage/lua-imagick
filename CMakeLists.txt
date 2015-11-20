@@ -28,11 +28,6 @@ endif()
 
 get_filename_component(_lua_lib_dir ${LUA_LIBRARY} PATH)
 
-if (USE_LUA52)
-  set(_lua_module_dir "${_lua_lib_dir}/lua/5.2")
-else ()
-  set(_lua_module_dir "${_lua_lib_dir}/lua/5.1")
-endif ()
 
 set (imagick_VERSION_MAJOR 1)
 set (imagick_VERSION_MINOR 0)
@@ -56,7 +51,24 @@ if (NOT WIN32)
 endif ()
 target_compile_options(imagick PRIVATE -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -DIMAGICK_VERSION=\"${imagick_VERSION_MAJOR}.${imagick_VERSION_MINOR}\")
 target_include_directories(imagick PRIVATE ${ImageMagick_INCLUDE_DIRS})
-target_link_libraries(imagick ${ImageMagick_LIBRARIES} ${LUA_LIBRARY})
+target_link_libraries(imagick ${ImageMagick_LIBRARIES})
+
+if(APPLE)
+    set(CMAKE_SHARED_MODULE_CREATE_C_FLAGS
+        "${CMAKE_SHARED_MODULE_CREATE_C_FLAGS} -undefined dynamic_lookup")
+endif()
+
+if(WIN32)
+    # Win32 modules need to be linked to the Lua library.
+    target_link_libraries(imagick ${LUA_LIBRARY})
+    set(_lua_module_dir "${_lua_lib_dir}")
+else()
+  if (USE_LUA52)
+    set(_lua_module_dir "${_lua_lib_dir}/lua/5.2")
+  else ()
+    set(_lua_module_dir "${_lua_lib_dir}/lua/5.1")
+  endif ()
+endif()
 
 install(TARGETS imagick DESTINATION "${_lua_module_dir}/")
 
