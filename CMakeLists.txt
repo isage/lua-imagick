@@ -44,14 +44,6 @@ add_definitions("-Wall")
 
 find_package(ImageMagick COMPONENTS MagickWand MagickCore REQUIRED)
 
-add_library(imagick SHARED ${sources})
-set_target_properties(imagick PROPERTIES PREFIX "")
-if (NOT WIN32)
-  set_target_properties(imagick PROPERTIES SUFFIX ".so")
-endif ()
-target_compile_options(imagick PRIVATE -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -DIMAGICK_VERSION=\"${imagick_VERSION_MAJOR}.${imagick_VERSION_MINOR}\")
-target_include_directories(imagick PRIVATE ${ImageMagick_INCLUDE_DIRS})
-target_link_libraries(imagick ${ImageMagick_LIBRARIES})
 
 if(APPLE)
     set(CMAKE_SHARED_MODULE_CREATE_C_FLAGS
@@ -69,6 +61,16 @@ else()
     set(_lua_module_dir "${_lua_lib_dir}/lua/5.1")
   endif ()
 endif()
+
+add_library(imagick MODULE ${sources})
+set_target_properties(imagick PROPERTIES PREFIX "")
+if (NOT WIN32)
+  set_target_properties(imagick PROPERTIES SUFFIX ".so")
+endif ()
+target_compile_options(imagick PRIVATE -fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -DIMAGICK_VERSION=\"${imagick_VERSION_MAJOR}.${imagick_VERSION_MINOR}\")
+target_include_directories(imagick PRIVATE ${ImageMagick_INCLUDE_DIRS})
+target_link_libraries(imagick ${ImageMagick_LIBRARIES})
+
 
 install(TARGETS imagick DESTINATION "${_lua_module_dir}/")
 
