@@ -412,6 +412,7 @@ static int imagick_optimize(lua_State* L)
   {
     DestroyMagickWand(a->m_wand);
     a->m_wand = tempwand;
+    MagickOptimizeImageTransparency(a->m_wand);
     lua_pushboolean(L, 1);
     return 1;
   }
@@ -1192,6 +1193,10 @@ static int imagick_smart_resize(lua_State* L)
   if (!!strcmp(format, "JPEG") || (w > sw) || (h > sh)) // if upscaling jpg or resizing any other format
   {
     filter = MitchellFilter;
+  }
+  if (!strcmp(format, "GIF"))
+  {
+    filter = LanczosFilter; //always use Lanczos for gifs to avoid overdithering
   }
 
   MagickResetIterator(a->m_wand);
