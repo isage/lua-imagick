@@ -32,7 +32,7 @@ static LuaImage* checkimage(lua_State* L, int index)
 static int imagick_open(lua_State* L)
 {
   const char* path = luaL_checkstring(L, 1);
-  
+
   LuaImage* a = (LuaImage* )lua_newuserdata(L, sizeof(LuaImage));
 
   luaL_getmetatable(L, IMG_METATABLE);
@@ -431,6 +431,22 @@ static int imagick_strip(lua_State* L)
   LuaImage* a = checkimage(L, 1);
 
   if (MagickStripImage(a->m_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_auto_orient(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  if (MagickAutoOrientImage(a->m_wand) != MagickTrue)
   {
     ExceptionType severity;
     char* error=MagickGetException(a->m_wand, &severity);
@@ -1532,6 +1548,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"coalesce",                        imagick_coalesce},
   {"optimize",                        imagick_optimize},
   {"strip",                           imagick_strip},
+  {"auto_orient",                     imagick_auto_orient},
   {"swirl",                           imagick_swirl},
   {"oilpaint",                        imagick_oilpaint},
   {"blur",                            imagick_blur},
