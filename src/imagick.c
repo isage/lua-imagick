@@ -1163,22 +1163,22 @@ void _parse_size_str(const char* size_str, size_t sw, size_t sh, size_t* w, size
   {
     if (x_ratio > y_ratio)
     {
-      nh = sh * x_ratio;
+      nh = lround((double)sh * x_ratio);
     }
     else
     {
-      nw = sw * y_ratio;
+      nw = lround((double)sw * y_ratio);
     }
   }
   else
   {
     if (x_ratio < y_ratio)
     {
-      nh = sh * x_ratio;
+      nh = lround((double)sh * x_ratio);
     }
     else
     {
-      nw = sw * y_ratio;
+      nw = lround((double)sw * y_ratio);
     }
   }
 
