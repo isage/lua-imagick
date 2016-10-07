@@ -2,7 +2,7 @@ luaunit = require('luaunit')
 
 TestIM = {}
 
-    function TestIM:setUp() 
+    function TestIM:setUp()
       self.ima = require("imagick")
     end
 
@@ -116,5 +116,27 @@ TestIM = {}
         luaunit.assertEquals(color, "1,1,1")
     end
 
-os.exit( luaunit.LuaUnit.run() )
+    function TestIM:test16_Read()
+        local img = self.ima.new()
+        luaunit.assertIsUserdata(img)
+        local suc = img:read("input.jpg")
+        luaunit.assertTrue(suc)
+    end
 
+    function TestIM:test17_SetResolution()
+        local img = self.ima.new()
+        img:set_resolution(72, 72)
+        local suc = img:read("input.svg")
+        luaunit.assertTrue(suc)
+        local width = img:width()
+        local height = img:height()
+
+        img = self.ima.new()
+        img:set_resolution(144, 144)
+        suc = img:read("input.svg")
+        luaunit.assertTrue(suc)
+        luaunit.assertEquals(img:width(), width * 2)
+        luaunit.assertEquals(img:height(), height * 2)
+    end
+
+os.exit( luaunit.LuaUnit.run() )

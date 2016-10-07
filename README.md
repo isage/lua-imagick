@@ -167,7 +167,25 @@ Create image from pseudo-image definition. See [here](http://www.imagemagick.org
 
 ******
 
+####`<image>image = imagick.new()`
+
+Creates a new image
+
+******
+
 ###imagick image functions
+
+####`<bool>status, <string>error = img:read(<string> filepath)`
+
+Reads an image from given filepath or image definition
+
+Example
+```lua
+local img = magick.new()
+img:read("input.svg")
+```
+
+******
 
 ####`<int>width =  img:width()`
 
@@ -336,13 +354,13 @@ Set font to use in annotate, font family string
 ******
 
 ####`<bool>status, <string>error = img:set_font_size(<int> size)`
-  
+
 Set font size to use in annotate
 
 ******
 
 ####`<bool>status, <string>error = img:set_font_style(<int> style)`
-  
+
 Set font style to use in annotate (See imagick.font_style enum)
 
 ******
@@ -361,7 +379,7 @@ Set font align to use in annotate (See imagick.font_align enum)
 
 ####`<bool>status, <string>error = img:annotate(<string> color, <string> text, <int> x, <int> y, <int> angle)`
 
-Annotate image 
+Annotate image
 
 ******
 
@@ -537,7 +555,7 @@ Resample image. See [http://www.imagemagick.org/api/magick-image.php#MagickResam
 
 ####`<bool>status, <string>error = img:scale(<int> width, <int> height)`
 
-Fast scale image 
+Fast scale image
 
 ******
 
@@ -582,6 +600,19 @@ Format is one of:
 It uses Mitchell filter for upscaling/downscaling all formats and Lanczos for downscaling JPEG.  
 
 You should use img:extent after it to really crop or add borders (with `img:get_bg_color()`) to image.
+
+******
+
+####`<bool>status = img:set_resolution(<double> x_resolution, <double> y_resolution)`
+
+Sets the image resolution
+
+Example
+```lua
+local img = magick.new()
+img:set_resolution(100, 100)
+img:read("input.svg")
+```
 
 ******
 
