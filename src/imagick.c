@@ -29,6 +29,26 @@ static LuaImage* checkimage(lua_State* L, int index)
   return (LuaImage *)ud;
 }
 
+static int imagick_new(lua_State* L)
+{
+  LuaImage* a = (LuaImage* )lua_newuserdata(L, sizeof(LuaImage));
+
+  luaL_getmetatable(L, IMG_METATABLE);
+  lua_setmetatable(L, -2);
+
+  // init magickwand
+  if (IsMagickWandInstantiated() == MagickFalse)
+  {
+    MagickWandGenesis();
+  }
+
+  a->m_wand = NewMagickWand();
+  a->p_wand = NewPixelWand();
+  a->d_wand = NewDrawingWand();
+
+  return 1;
+}
+
 static int imagick_open(lua_State* L)
 {
   const char* path = luaL_checkstring(L, 1);
@@ -130,6 +150,23 @@ static int imagick_open_pseudo(lua_State* L)
   }
 
   return 1;  /* new userdatum is already on the stack */
+}
+
+static int imagick_read(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* path = luaL_checkstring(L, 2);
+
+  if (MagickReadImage(a->m_wand, path) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
 }
 
 static int imagick_clone(lua_State* L)
@@ -1514,8 +1551,21 @@ static int imagick_level_channel(lua_State* L)
   return 1;
 }
 
+static int imagick_set_resolution(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const double x_resolution = luaL_checknumber(L, 2);
+  const double y_resolution = luaL_checknumber(L, 3);
+
+  MagickSetResolution(a->m_wand, x_resolution, y_resolution);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
+  {"new", imagick_new},
   {"open", imagick_open},
   {"open_blob", imagick_open_blob},
   {"open_pseudo", imagick_open_pseudo},
@@ -1529,6 +1579,7 @@ static const struct luaL_Reg imagicklib_meta[] = {
 };
 
 static const struct luaL_Reg imagicklib_m[] = {
+  {"read",                            imagick_read},
   {"clone",                           imagick_clone},
   {"width",                           imagick_width},
   {"height",                          imagick_height},
@@ -1599,6 +1650,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"border",                          imagick_border},
   {"level",                           imagick_level},
   {"level_channel",                   imagick_level_channel},
+  {"set_resolution",                  imagick_set_resolution},
   {NULL, NULL}
 };
 
