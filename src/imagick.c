@@ -846,6 +846,15 @@ static int imagick_set_font(lua_State* L)
     return 2;
   }
 
+  if (MagickSetFont(a->m_wand, font) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=DrawGetException(a->d_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -856,15 +865,6 @@ static int imagick_set_font_family(lua_State* L)
   const char* font = luaL_checkstring(L, 2);
 
   if (DrawSetFontFamily(a->d_wand, font) != MagickTrue)
-  {
-    ExceptionType severity;
-    char* error=DrawGetException(a->d_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
-  }
-
-  if (MagickSetFont(a->m_wand, font) != MagickTrue)
   {
     ExceptionType severity;
     char* error=DrawGetException(a->d_wand, &severity);
