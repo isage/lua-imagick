@@ -335,6 +335,16 @@ static int imagick_set_gravity(lua_State* L)
     lua_pushstring(L, error);
     return 2;
   }
+
+  if (MagickSetGravity(a->m_wand, gravity) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -759,6 +769,15 @@ static int imagick_set_bg_color(lua_State* L)
 
   PixelSetColor(a->p_wand, color);
 
+  if (MagickSetBackgroundColor(a->m_wand, a->p_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
   MagickResetIterator(a->m_wand);
   while (MagickNextImage(a->m_wand) == 1)
   {
@@ -820,6 +839,15 @@ static int imagick_set_font_family(lua_State* L)
     return 2;
   }
 
+  if (MagickSetFont(a->m_wand, font) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=DrawGetException(a->d_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -829,6 +857,7 @@ static int imagick_set_font_size(lua_State* L)
   LuaImage* a = checkimage(L, 1);
   double size = luaL_checknumber(L, 2);
 
+  MagickSetPointsize(a->m_wand, size);
   DrawSetFontSize(a->d_wand, size);
 
   lua_pushboolean(L, 1);
