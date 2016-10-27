@@ -132,6 +132,25 @@ static int imagick_open_pseudo(lua_State* L)
   return 1;  /* new userdatum is already on the stack */
 }
 
+static int imagick_load(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* data = luaL_checkstring(L, 2);
+
+  if (MagickReadImage(a->m_wand, data) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+
+  return 1;
+}
+
+
 static int imagick_clone(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1529,6 +1548,7 @@ static const struct luaL_Reg imagicklib_meta[] = {
 };
 
 static const struct luaL_Reg imagicklib_m[] = {
+  {"load",                            imagick_load},
   {"clone",                           imagick_clone},
   {"width",                           imagick_width},
   {"height",                          imagick_height},
