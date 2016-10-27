@@ -807,6 +807,31 @@ static int imagick_get_bg_color(lua_State* L)
   return 1;
 }
 
+static int imagick_set_fill_color(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* color = luaL_checkstring(L, 2);
+
+  PixelSetColor(a->p_wand, color);
+  DrawSetFillColor(a->d_wand, a->p_wand);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_set_stroke_color(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* color = luaL_checkstring(L, 2);
+
+  PixelSetColor(a->p_wand, color);
+  DrawSetStrokeColor(a->d_wand, a->p_wand);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+
 static int imagick_set_font(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1617,6 +1642,8 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"set_compose",                     imagick_set_compose},
   {"set_bg_color",                    imagick_set_bg_color},
   {"get_bg_color",                    imagick_get_bg_color},
+  {"set_fill_color",                  imagick_set_fill_color},
+  {"set_stroke_color",                imagick_set_stroke_color},
   {"set_font",                        imagick_set_font},
   {"set_font_family",                 imagick_set_font_family},
   {"set_font_size",                   imagick_set_font_size},
