@@ -585,6 +585,26 @@ You should use img:extent after it to really crop or add borders (with `img:get_
 
 ******
 
+####`<bool>status, <string>error = img:set_fill_color(<string> color)`
+
+Set DrawingWand fill color
+
+******
+
+####`<bool>status, <string>error = img:set_stroke_color(<string> color)`
+
+Set DrawingWand stroke color
+
+******
+
+####`img:query_metrics(<string> text)`
+
+Query font metrics. See http://www.imagemagick.org/api/magick-wand.php#MagickQueryFontMetrics
+Returns 13 <double> variables or nil,<string>error
+
+******
+
+
 ##Examples
 
 ###Captcha
