@@ -1626,7 +1626,12 @@ static int imagick_distort(lua_State* L)
 
   luaL_checktype(L, 3, LUA_TTABLE);
 
+#if LUA_VERSION_NUM >= 502
   int nparams=lua_objlen(L,3);
+#else
+  int nparams=lua_rawlen(L,3);
+#endif
+
   double* params = (double*)malloc(sizeof(double)*nparams);
 
   lua_pushvalue(L, 3);
