@@ -1618,6 +1618,51 @@ static int imagick_query_metrics(lua_State* L)
   return 13;
 }
 
+static int imagick_distort(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const int method = luaL_checkinteger(L, 2);
+  const int bestfit = lua_toboolean(L,4);
+
+  luaL_checktype(L, 3, LUA_TTABLE);
+
+  int nparams=lua_objlen(L,3);
+  double* params = (double*)malloc(sizeof(double)*nparams);
+
+  lua_pushvalue(L, 3);
+  // stack: -1 = table
+  lua_pushnil(L);
+  // stack: -1 = nil, -2 = table
+
+  int idx = 0;
+  while(lua_next(L,-2))
+  {
+    // stack: -1 = value, -2 = key, -3 = table
+    lua_pushvalue(L, -2);
+    // stack: -1 = key, -2 = value, -3 = key, -4 = table
+
+    params[idx] = lua_tonumber(L, -2);
+    idx++;
+    lua_pop(L,2);
+    // stack: -1 = key, -2 = table
+  }
+  // stack: -1 = table
+  lua_pop(L,1);
+
+  if (MagickDistortImage(a->m_wand, method, nparams, params, bestfit) != MagickTrue)
+  {
+    free(params);
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  free(params);
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1707,6 +1752,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"level",                           imagick_level},
   {"level_channel",                   imagick_level_channel},
   {"query_metrics",                   imagick_query_metrics},
+  {"distort",                         imagick_distort},
   {NULL, NULL}
 };
 
@@ -1939,6 +1985,32 @@ int luaopen_imagick(lua_State* L)
     "RightAlign"
   };
   maketable(L, "text_align", text_align, 4);
+
+  // Distort methods
+  char* distort_method[] = {
+    "UndefinedDistortion",
+    "AffineDistortion",
+    "AffineProjectionDistortion",
+    "ScaleRotateTranslateDistortion",
+    "PerspectiveDistortion",
+    "PerspectiveProjectionDistortion",
+    "BilinearForwardDistortion",
+    "BilinearReverseDistortion",
+    "PolynomialDistortion",
+    "ArcDistortion",
+    "PolarDistortion",
+    "DePolarDistortion",
+    "Cylinder2PlaneDistortion",
+    "Plane2CylinderDistortion",
+    "BarrelDistortion",
+    "BarrelInverseDistortion",
+    "ShepardsDistortion",
+    "ResizeDistortion",
+    "SentinelDistortion"
+  };
+  maketable(L, "distort_method", distort_method, 19);
+
+
 
   // color channels
   lua_newtable(L);
