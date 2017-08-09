@@ -79,6 +79,16 @@ local magick = require "imagick"
 print(magick.gravity["WestGravity"])
 ```
 
+#### imagick.interlace
+
+Interlace scheme values  
+See [here](https://www.imagemagick.org/api/MagickCore/image_8h.html#af89b808293a7faf805254d1b01e69dc2)  
+Example  
+```lua
+local magick = require "imagick"
+print(magick.interlace["JPEGInterlace"])
+```
+
 #### imagick.colorspace
 
 Colorspace values  
@@ -249,6 +259,19 @@ Get current image gravity
 #### `<bool>status, <string>error = img:set_gravity(<int> gravity)`
 
 Set image gravity (See imagick.gravity enum)
+
+******
+
+#### `<int>scheme = img:get_interlace()`
+
+Get current image interlace scheme
+
+******
+
+#### `<bool>status, <string>error = img:set_interlace(<int> scheme)`
+
+Set image interlace sheme (See imagick.interlace enum)  
+e.g. for Progressive JPEG set it to JPEGInterlace
 
 ******
 

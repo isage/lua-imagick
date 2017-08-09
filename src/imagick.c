@@ -349,6 +349,50 @@ static int imagick_set_gravity(lua_State* L)
   return 1;
 }
 
+static int imagick_get_interlace(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  size_t scheme = MagickGetInterlaceScheme(a->m_wand);
+  lua_pushinteger(L, scheme);
+  return 1;
+}
+
+static int imagick_set_interlace(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const size_t scheme = luaL_checkinteger(L, 2);
+
+  if (scheme > PNGInterlace)
+  {
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, "Wrong interlace type");
+    return 2;
+  }
+
+  if (MagickSetImageInterlaceScheme(a->m_wand, scheme) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  if (MagickSetInterlaceScheme(a->m_wand, scheme) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+
 static int imagick_get_option(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -1696,6 +1740,8 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"blob",                            imagick_blob},
   {"get_gravity",                     imagick_get_gravity},
   {"set_gravity",                     imagick_set_gravity},
+  {"get_interlace",                   imagick_get_interlace},
+  {"set_interlace",                   imagick_set_interlace},
   {"get_option",                      imagick_get_option},
   {"set_option",                      imagick_set_option},
   {"get_artifact",                    imagick_get_artifact},
@@ -1822,6 +1868,19 @@ int luaopen_imagick(lua_State* L)
     "StaticGravity"
   };
   maketable(L, "gravity", gravity, 11);
+
+  // interlace
+  char* interlace[] = {
+    "UndefinedInterlace",
+    "NoInterlace",
+    "LineInterlace",
+    "PlaneInterlace",
+    "PartitionInterlace",
+    "GIFInterlace",
+    "JPEGInterlace",
+    "PNGInterlace"
+  };
+  maketable(L, "interlace", interlace, 8);
 
   // colorspace
   char* colorspace[] = {
