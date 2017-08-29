@@ -167,8 +167,6 @@ Opens image from given filepath or image definition
 Example  
 ```lua
 local img = magick.open("input.jpg")  -- open jpg file
-or
-local img = magick.open("xc:rgb(255,0,0)") -- open empty red image
 ```
 
 ******
@@ -185,7 +183,7 @@ Create image from pseudo-image definition. See [here](http://www.imagemagick.org
 
 ******
 
-###imagick image functions
+### imagick image functions
 
 #### `<int>width =  img:width()`
 
