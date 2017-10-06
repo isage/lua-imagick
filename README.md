@@ -449,6 +449,30 @@ Blur image
 
 ******
 
+#### `<bool>status, <string>error = img:flip()`
+
+Creates a vertical mirror image by reflecting the pixels around the central x-axis.
+
+******
+
+#### `<bool>status, <string>error = img:flop()`
+
+Creates a horizontal mirror image by reflecting the pixels around the central y-axis.
+
+******
+
+#### `<bool>status, <string>error = img:transpose()`
+
+Creates a vertical mirror image by reflecting the pixels around the central x-axis while rotating them 90-degrees.
+
+******
+
+#### `<bool>status, <string>error = img:transverse  ()`
+
+Creates a horizontal mirror image by reflecting the pixels around the central y-axis while rotating them 270-degrees.
+
+******
+
 #### `<bool>status, <string>error = img:sharpen(<double> sigma, <double> radius)`
 
 Sharpen image

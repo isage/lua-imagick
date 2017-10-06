@@ -1712,6 +1712,70 @@ static int imagick_distort(lua_State* L)
   return 1;
 }
 
+static int imagick_flip(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  if (MagickFlipImage(a->m_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_flop(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  if (MagickFlopImage(a->m_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_transpose(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  if (MagickTransposeImage(a->m_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_transverse(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  if (MagickTransverseImage(a->m_wand) != MagickTrue)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -1804,6 +1868,10 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"level_channel",                   imagick_level_channel},
   {"query_metrics",                   imagick_query_metrics},
   {"distort",                         imagick_distort},
+  {"flip",                            imagick_flip},
+  {"flop",                            imagick_flop},
+  {"transpose",                       imagick_transpose},
+  {"transverse",                      imagick_transverse},
   {NULL, NULL}
 };
 
