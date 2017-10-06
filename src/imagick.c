@@ -535,14 +535,22 @@ static int imagick_swirl(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
   double degrees = luaL_checknumber(L,2);
-  if (MagickSwirlImage(a->m_wand, degrees) != MagickTrue)
+
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickSwirlImage(a->m_wand, degrees) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -551,14 +559,22 @@ static int imagick_oilpaint(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
   double radius = luaL_checknumber(L,2);
-  if (MagickOilPaintImage(a->m_wand, radius) != MagickTrue)
+
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickOilPaintImage(a->m_wand, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -569,14 +585,21 @@ static int imagick_blur(lua_State* L)
   double sigma = luaL_checknumber(L,2);
   double radius = luaL_checknumber(L,3);
 
-  if (MagickBlurImage(a->m_wand, sigma, radius) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickBlurImage(a->m_wand, sigma, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -587,14 +610,21 @@ static int imagick_sharpen(lua_State* L)
   double sigma = luaL_checknumber(L,2);
   double radius = luaL_checknumber(L,3);
 
-  if (MagickSharpenImage(a->m_wand, sigma, radius) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickSharpenImage(a->m_wand, sigma, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -605,14 +635,21 @@ static int imagick_adaptive_blur(lua_State* L)
   double sigma = luaL_checknumber(L,2);
   double radius = luaL_checknumber(L,3);
 
-  if (MagickAdaptiveBlurImage(a->m_wand, sigma, radius) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickAdaptiveBlurImage(a->m_wand, sigma, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -623,14 +660,21 @@ static int imagick_adaptive_sharpen(lua_State* L)
   double sigma = luaL_checknumber(L,2);
   double radius = luaL_checknumber(L,3);
 
-  if (MagickAdaptiveSharpenImage(a->m_wand, sigma, radius) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickAdaptiveSharpenImage(a->m_wand, sigma, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -642,14 +686,21 @@ static int imagick_blur_channel(lua_State* L)
   double sigma = luaL_checknumber(L,3);
   double radius = luaL_checknumber(L,4);
 
-  if (MagickBlurImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickBlurImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -661,14 +712,21 @@ static int imagick_sharpen_channel(lua_State* L)
   double sigma = luaL_checknumber(L,3);
   double radius = luaL_checknumber(L,4);
 
-  if (MagickSharpenImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickSharpenImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -680,14 +738,21 @@ static int imagick_adaptive_blur_channel(lua_State* L)
   double sigma = luaL_checknumber(L,3);
   double radius = luaL_checknumber(L,4);
 
-  if (MagickAdaptiveBlurImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickAdaptiveBlurImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -699,14 +764,21 @@ static int imagick_adaptive_sharpen_channel(lua_State* L)
   double sigma = luaL_checknumber(L,3);
   double radius = luaL_checknumber(L,4);
 
-  if (MagickAdaptiveSharpenImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickAdaptiveSharpenImageChannel(a->m_wand, chan, sigma, radius) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -831,6 +903,7 @@ static int imagick_set_bg_color(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
     }
   }
@@ -978,14 +1051,20 @@ static int imagick_annotate(lua_State* L)
   PixelSetColor(a->p_wand, color);
   DrawSetFillColor(a->d_wand, a->p_wand);
 
-  if (MagickAnnotateImage(a->m_wand, a->d_wand, x, y, angle, text) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickAnnotateImage(a->m_wand, a->d_wand, x, y, angle, text) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
 
   lua_pushboolean(L, 1);
   return 1;
@@ -1009,6 +1088,7 @@ static int imagick_resize(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
     }
   }
@@ -1033,6 +1113,7 @@ static int imagick_adaptive_resize(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
     }
   }
@@ -1060,9 +1141,11 @@ static int imagick_resample(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
     }
   }
+  MagickResetIterator(a->m_wand);
 
   lua_pushboolean(L, 1);
   return 1;
@@ -1083,6 +1166,7 @@ static int imagick_scale(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
     }
   }
@@ -1111,6 +1195,11 @@ static int imagick_crop(lua_State* L)
   x = geometry.x;
   y = geometry.y;
 
+  char* format = MagickGetImageFormat(a->m_wand);
+  int gif = !strcmp(format,"GIF");
+  MagickRelinquishMemory(format);
+
+
   MagickResetIterator(a->m_wand);
   while (MagickNextImage(a->m_wand) == 1)
   {
@@ -1120,7 +1209,20 @@ static int imagick_crop(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
+    }
+    if(gif)
+    {
+      if (MagickSetImagePage(a->m_wand, w, h, 0, 0) != MagickTrue)
+      {
+        ExceptionType severity;
+        char* error=MagickGetException(a->m_wand, &severity);
+        lua_pushboolean(L, 0);
+        lua_pushstring(L, error);
+        MagickResetIterator(a->m_wand);
+        return 2;
+      }
     }
   }
   MagickResetIterator(a->m_wand);
@@ -1144,6 +1246,7 @@ static int imagick_thumbnail(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
     }
   }
@@ -1218,6 +1321,7 @@ static int imagick_extent(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
     }
   }
@@ -1341,6 +1445,7 @@ static int imagick_smart_resize(lua_State* L)
       char* error=MagickGetException(a->m_wand, &severity);
       lua_pushboolean(L, 0);
       lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
       return 2;
     }
   }
@@ -1358,14 +1463,20 @@ static int imagick_rotate(lua_State* L)
 
   PixelSetColor(a->p_wand, color);
 
-  if (MagickRotateImage(a->m_wand, a->p_wand, angle) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickRotateImage(a->m_wand, a->p_wand, angle) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
 
   lua_pushboolean(L, 1);
   return 1;
@@ -1378,14 +1489,20 @@ static int imagick_modulate(lua_State* L)
   double saturation = luaL_optnumber(L, 3, 0);
   double hue = luaL_optnumber(L, 4, 0); // huehuehuehue
 
-  if (MagickModulateImage(a->m_wand, brightness, saturation, hue) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickModulateImage(a->m_wand, brightness, saturation, hue) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
 
   lua_pushboolean(L, 1);
   return 1;
@@ -1397,14 +1514,21 @@ static int imagick_gamma(lua_State* L)
   LuaImage* a = checkimage(L, 1);
   double gamma = luaL_checknumber(L,2);
 
-  if (MagickGammaImage(a->m_wand, gamma) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickGammaImage(a->m_wand, gamma) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1415,14 +1539,21 @@ static int imagick_gamma_channel(lua_State* L)
   double gamma = luaL_checknumber(L,2);
   int chan = luaL_checkinteger(L,3);
 
-  if (MagickGammaImageChannel(a->m_wand, chan, gamma) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickGammaImageChannel(a->m_wand, chan, gamma) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1431,14 +1562,21 @@ static int imagick_auto_gamma(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
 
-  if (MagickAutoGammaImage(a->m_wand) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickAutoGammaImage(a->m_wand) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1448,14 +1586,21 @@ static int imagick_auto_gamma_channel(lua_State* L)
   LuaImage* a = checkimage(L, 1);
   int chan = luaL_checkinteger(L,2);
 
-  if (MagickAutoGammaImageChannel(a->m_wand, chan) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickAutoGammaImageChannel(a->m_wand, chan) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1465,14 +1610,21 @@ static int imagick_contrast(lua_State* L)
   LuaImage* a = checkimage(L, 1);
   const int sharpen = lua_toboolean(L, 2);
 
-  if (MagickContrastImage(a->m_wand, sharpen) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickContrastImage(a->m_wand, sharpen) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1493,16 +1645,23 @@ static int imagick_colorize(lua_State* L)
   PixelSetBlue(alpha, opacity);
   PixelSetOpacity(alpha, opacity);
 
-  if (MagickColorizeImage(a->m_wand, colorize, alpha) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    DestroyPixelWand(colorize);
-    DestroyPixelWand(alpha);
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickColorizeImage(a->m_wand, colorize, alpha) != MagickTrue)
+    {
+      DestroyPixelWand(colorize);
+      DestroyPixelWand(alpha);
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   DestroyPixelWand(colorize);
   DestroyPixelWand(alpha);
 
@@ -1515,14 +1674,21 @@ static int imagick_negate(lua_State* L)
   LuaImage* a = checkimage(L, 1);
   const int gray = lua_toboolean(L,2);
 
-  if (MagickNegateImage(a->m_wand, gray) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickNegateImage(a->m_wand, gray) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1533,14 +1699,21 @@ static int imagick_negate_channel(lua_State* L)
   const int gray = lua_toboolean(L,2);
   const int chan = luaL_checkinteger(L,3);
 
-  if (MagickNegateImageChannel(a->m_wand, chan, gray) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickNegateImageChannel(a->m_wand, chan, gray) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1573,15 +1746,22 @@ static int imagick_border(lua_State* L)
 
   PixelSetColor(color_wand, color);
 
-  if (MagickBorderImage(a->m_wand, color_wand, width, height) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    DestroyPixelWand(color_wand);
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickBorderImage(a->m_wand, color_wand, width, height) != MagickTrue)
+    {
+      DestroyPixelWand(color_wand);
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   DestroyPixelWand(color_wand);
   lua_pushboolean(L, 1);
   return 1;
@@ -1594,14 +1774,21 @@ static int imagick_level(lua_State* L)
   double white = luaL_checknumber(L,3);
   double gamma = luaL_checknumber(L,4);
 
-  if (MagickLevelImage(a->m_wand, black, gamma, white) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickLevelImage(a->m_wand, black, gamma, white) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1619,14 +1806,21 @@ static int imagick_level_channel(lua_State* L)
   black *= (double)range/100;
   white *= (double)range/100;
 
-  if (MagickLevelImageChannel(a->m_wand, chan, black, gamma, white) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickLevelImageChannel(a->m_wand, chan, black, gamma, white) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1698,15 +1892,22 @@ static int imagick_distort(lua_State* L)
   // stack: -1 = table
   lua_pop(L,1);
 
-  if (MagickDistortImage(a->m_wand, method, nparams, params, bestfit) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    free(params);
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickDistortImage(a->m_wand, method, nparams, params, bestfit) != MagickTrue)
+    {
+      free(params);
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   free(params);
   lua_pushboolean(L, 1);
   return 1;
@@ -1716,14 +1917,21 @@ static int imagick_flip(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
 
-  if (MagickFlipImage(a->m_wand) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickFlipImage(a->m_wand) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1732,14 +1940,21 @@ static int imagick_flop(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
 
-  if (MagickFlopImage(a->m_wand) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickFlopImage(a->m_wand) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1748,14 +1963,21 @@ static int imagick_transpose(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
 
-  if (MagickTransposeImage(a->m_wand) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickTransposeImage(a->m_wand) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -1764,14 +1986,21 @@ static int imagick_transverse(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
 
-  if (MagickTransverseImage(a->m_wand) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickTransverseImage(a->m_wand) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
+
   lua_pushboolean(L, 1);
   return 1;
 }
