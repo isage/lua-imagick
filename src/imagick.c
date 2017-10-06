@@ -1106,7 +1106,7 @@ static int imagick_crop(lua_State* L)
   geometry.width = w;
   geometry.height = h;
   geometry.x = x;
-  geometry.y = x;
+  geometry.y = y;
   GravityAdjustGeometry(MagickGetImageWidth(a->m_wand), MagickGetImageHeight(a->m_wand) , MagickGetImageGravity(a->m_wand), &geometry);
   x = geometry.x;
   y = geometry.y;
