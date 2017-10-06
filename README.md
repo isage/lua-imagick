@@ -573,6 +573,7 @@ Fast scale image
 #### `<bool>status, <string>error = img:crop(<int> width, <int> height)`
 
 Crop image
+You can pass additional x,y coordinates, e.g.: `<bool>status, <string>error = img:crop(<int> width, <int> height, <int> x, <int> y)`
 
 ******
 
