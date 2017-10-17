@@ -1264,14 +1264,20 @@ static int imagick_composite(lua_State* L)
   size_t y = luaL_checkinteger(L, 4);
   CompositeOperator op = luaL_optinteger(L, 5, OverCompositeOp);
 
-  if (MagickCompositeImage(a->m_wand, b->m_wand, op, x, y) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickCompositeImage(a->m_wand, b->m_wand, op, x, y) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
 
   lua_pushboolean(L, 1);
   return 1;
