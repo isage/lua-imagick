@@ -671,9 +671,54 @@ img:write("out.jpg")
 
 ```
 
+******
+
+#### `<bool>status, <string>error = img:threshold(<int> value)`
+
+Apply simultaneous black/white threshold to the image.  
+See https://www.imagemagick.org/api/magick-image.php#MagickThresholdImage  
+See https://www.imagemagick.org/script/command-line-options.php#threshold  
+  
+`value` is effective between `0` and `0xffff`
+```lua
+local magick = require "imagick"
+local img = magick.open("rose.jpg")
+
+---Converts percents to value
+function pct(pct)
+  return 65535 * pct / 100
+end
+
+img:threshold(pct(95))
+img:write("out.jpg")
+
+```
 
 ******
 
+#### `<bool>status, <string>error = img:trim(<int> fuzz)`
+
+Trim an image.  
+This option removes any edges that are exactly the same color as the corner pixels. Use fuzz to make trim remove edges that are nearly the same color as the corner pixels.  
+See https://www.imagemagick.org/api/magick-image.php#MagickTrimImage  
+See https://www.imagemagick.org/script/command-line-options.php#trim  
+  
+`fuzz` is effective between `0` and `0xffff`
+```lua
+local magick = require "imagick"
+local img = magick.open("rose.jpg")
+
+---Converts percents to value
+function pct(pct)
+  return 65535 * pct / 100
+end
+
+img:trim(pct(5))
+img:write("out.jpg")
+
+```
+
+******
 
 ## Examples
 
