@@ -2011,6 +2011,54 @@ static int imagick_transverse(lua_State* L)
   return 1;
 }
 
+static int imagick_threshold(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  double percent = luaL_checknumber(L,2);
+
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
+  {
+    if (MagickThresholdImage(a->m_wand, percent) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
+  }
+  MagickResetIterator(a->m_wand);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int imagick_trim(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  double fuzz = luaL_checknumber(L,2);
+
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
+  {
+    if (MagickTrimImage(a->m_wand, fuzz) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
+  }
+  MagickResetIterator(a->m_wand);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 
 static const struct luaL_Reg imagicklib_f[] = {
   {"open", imagick_open},
@@ -2107,6 +2155,8 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"flop",                            imagick_flop},
   {"transpose",                       imagick_transpose},
   {"transverse",                      imagick_transverse},
+  {"threshold",                       imagick_threshold},
+  {"trim",                            imagick_trim},
   {NULL, NULL}
 };
 
