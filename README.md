@@ -185,6 +185,14 @@ Create image from pseudo-image definition. See [here](http://www.imagemagick.org
 
 ### imagick image functions
 
+#### `<void> img:destroy()`
+
+Manually free all allocated for image memory.  
+Use with caution. Never call to any image methods afterwards.
+
+******
+
+
 #### `<int>width =  img:width()`
 
 Get image width in pixels
