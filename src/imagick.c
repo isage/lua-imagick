@@ -170,9 +170,23 @@ static int imagick_clone(lua_State* L)
 static int imagick_destroy(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
-  DestroyMagickWand(a->m_wand);
-  DestroyPixelWand(a->p_wand);
-  DestroyDrawingWand(a->d_wand);
+  if (a->m_wand)
+  {
+    DestroyMagickWand(a->m_wand);
+    a->m_wand = NULL;
+  }
+  
+  if (a->p_wand)
+  {
+    DestroyPixelWand(a->p_wand);
+    a->p_wand = NULL;
+  }
+    
+  if (a->d_wand)
+  {
+    DestroyDrawingWand(a->d_wand);
+    a->d_wand = NULL;
+  }
   return 0;
 }
 
@@ -2074,6 +2088,7 @@ static const struct luaL_Reg imagicklib_meta[] = {
 };
 
 static const struct luaL_Reg imagicklib_m[] = {
+  {"destroy",                         imagick_destroy},
   {"load",                            imagick_load},
   {"clone",                           imagick_clone},
   {"width",                           imagick_width},
