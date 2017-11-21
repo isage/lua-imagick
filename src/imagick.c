@@ -324,6 +324,7 @@ static int imagick_get_gravity(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
 
+  MagickResetIterator(a->m_wand);
   size_t gravity = MagickGetImageGravity(a->m_wand);
   lua_pushinteger(L, gravity);
   return 1;
@@ -341,14 +342,20 @@ static int imagick_set_gravity(lua_State* L)
     return 2;
   }
 
-  if (MagickSetImageGravity(a->m_wand, gravity) != MagickTrue)
+  MagickResetIterator(a->m_wand);
+  while (MagickNextImage(a->m_wand) == 1)
   {
-    ExceptionType severity;
-    char* error=MagickGetException(a->m_wand, &severity);
-    lua_pushboolean(L, 0);
-    lua_pushstring(L, error);
-    return 2;
+    if (MagickSetImageGravity(a->m_wand, gravity) != MagickTrue)
+    {
+      ExceptionType severity;
+      char* error=MagickGetException(a->m_wand, &severity);
+      lua_pushboolean(L, 0);
+      lua_pushstring(L, error);
+      MagickResetIterator(a->m_wand);
+      return 2;
+    }
   }
+  MagickResetIterator(a->m_wand);
 
   if (MagickSetGravity(a->m_wand, gravity) != MagickTrue)
   {
