@@ -1463,6 +1463,8 @@ static int imagick_smart_resize(lua_State* L)
     filter = LanczosFilter; //always use Lanczos for gifs to avoid overdithering
   }
 
+  MagickRelinquishMemory(format);
+
   MagickResetIterator(a->m_wand);
   while (MagickNextImage(a->m_wand) == 1)
   {
