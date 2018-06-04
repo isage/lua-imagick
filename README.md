@@ -205,6 +205,12 @@ Get image height in pixels
 
 ******
 
+#### `<int>count =  img:count()`
+
+Get number of images inside an image (e.g. frames in GIF or pages in PDF)
+
+******
+
 #### `<image>image =  img:clone()`
 
 Clone image with all current settings/values
@@ -418,6 +424,12 @@ Coalesce (rebuild) all image frames
 #### `<bool>status, <string>error = img:optimize()`
 
 Optimise all image frames
+
+******
+
+#### `<bool>status, <string>error = img:deconstruct()`
+
+Deconstruct all image frames (MagickDeconstructImages() )
 
 ******
 

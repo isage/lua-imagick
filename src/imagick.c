@@ -217,6 +217,14 @@ static int imagick_height(lua_State* L)
   return 1;
 }
 
+static int imagick_count(lua_State* L)
+{
+  LuaImage *a = checkimage(L, 1);
+  int h = MagickGetNumberImages(a->m_wand);
+  lua_pushnumber(L, h);
+  return 1;
+}
+
 static int imagick_write(lua_State* L)
 {
   LuaImage *a = checkimage(L, 1);
@@ -507,6 +515,28 @@ static int imagick_optimize(lua_State* L)
     DestroyMagickWand(a->m_wand);
     a->m_wand = tempwand;
     MagickOptimizeImageTransparency(a->m_wand);
+    lua_pushboolean(L, 1);
+    return 1;
+  }
+  else
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+}
+
+static int imagick_deconstruct(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+
+  MagickWand* tempwand;
+  if ((tempwand=MagickDeconstructImages(a->m_wand)) != NULL)
+  {
+    DestroyMagickWand(a->m_wand);
+    a->m_wand = tempwand;
     lua_pushboolean(L, 1);
     return 1;
   }
@@ -2102,6 +2132,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"clone",                           imagick_clone},
   {"width",                           imagick_width},
   {"height",                          imagick_height},
+  {"count",                           imagick_count},
   {"write",                           imagick_write},
   {"write_all",                       imagick_write_all},
   {"get_format",                      imagick_get_format},
@@ -2119,6 +2150,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"set_artifact",                    imagick_set_artifact},
   {"coalesce",                        imagick_coalesce},
   {"optimize",                        imagick_optimize},
+  {"deconstruct",                     imagick_deconstruct},
   {"strip",                           imagick_strip},
   {"auto_orient",                     imagick_auto_orient},
   {"swirl",                           imagick_swirl},
