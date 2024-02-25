@@ -30,26 +30,17 @@ Because existing FFI-based bindings are hackish and buggy, duh.
 ## Requirements
 
 * ImageMagick developer headers (>=6.8.8.3)
-* Lua (5.1/5.2) or LuaJit
-* Cmake 2.8.12 or later
+* Lua (5.1/5.4) or LuaJit
+* Make
 * Working C compiler
-
-You can get fresh IM and cmake for ubuntu 12.04/14.04 [here](https://launchpad.net/~isage-dna/+archive/ubuntu/imagick/)
 
 ## Installation
 
 As easy as  
 ```bash
-mkdir build
-cd build
-cmake ..
-make
+make LUA=LUAVER
 make install
 ```
-
-You can also use `make unittest` after make to run tests.  
-By default module compiles with support for luajit  
-For other Lua interpreters see cmake options.
 
 ## Usage
 
