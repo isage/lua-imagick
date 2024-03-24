@@ -911,6 +911,49 @@ static int imagick_set_icc_profile(lua_State* L)
   return 1;
 }
 
+static int imagick_load_icc_profile(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  size_t length;
+  const char* path = luaL_checkstring(L, 2);
+  FILE* fp = fopen(path, "rb");
+  if (!fp)
+  {
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, strerror(errno));
+    return 2;
+  }
+
+  fseek(fp,0, SEEK_END);
+  length = ftell(fp);
+  fseek(fp,0, SEEK_SET);
+
+  char *data = (char*)malloc(length);
+  if (!data)
+  {
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, "out of memory");
+    return 2;
+  }
+
+  fread(data, length, 1, fp);
+  fclose(fp);
+
+  if (MagickProfileImage(a->m_wand, "ICC", data, length) != MagickTrue)
+  {
+    free(data);
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+  free(data);
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 static int imagick_set_compose(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -2169,6 +2212,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"get_icc_profile",                 imagick_get_icc_profile},
   {"has_icc_profile",                 imagick_has_icc_profile},
   {"set_icc_profile",                 imagick_set_icc_profile},
+  {"load_icc_profile",                imagick_load_icc_profile},
   {"set_compose",                     imagick_set_compose},
   {"set_bg_color",                    imagick_set_bg_color},
   {"get_bg_color",                    imagick_get_bg_color},

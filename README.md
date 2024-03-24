@@ -34,8 +34,6 @@ Because existing FFI-based bindings are hackish and buggy, duh.
 * Cmake 2.8.12 or later
 * Working C compiler
 
-You can get fresh IM and cmake for ubuntu 12.04/14.04 [here](https://launchpad.net/~isage-dna/+archive/ubuntu/imagick/)
-
 ## Installation
 
 As easy as  
@@ -357,6 +355,12 @@ Returns image icc profile as blob
 #### `<bool>status, <string>error = img:set_icc_profile(<string> blob)`
 
 Set (and convert image to) image icc profile from blob
+
+******
+
+#### `<bool>status, <string>error = img:load_icc_profile(<string> filename)`
+
+Set (and convert image to) image icc profile from file
 
 ******
 
