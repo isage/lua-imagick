@@ -70,7 +70,7 @@ img:write("out.jpg")
 #### imagick.gravity
 
 Gravity values  
-See [here](http://www.imagemagick.org/api/MagickCore/geometry_8h.html#afd1e527b17eba5305ea949fa7c717069)  
+See [here](https://imagemagick.org/api/MagickCore/geometry_8h.html#afd1e527b17eba5305ea949fa7c717069)  
 Example  
 ```lua
 local magick = require "imagick"
@@ -80,7 +80,7 @@ print(magick.gravity["WestGravity"])
 #### imagick.interlace
 
 Interlace scheme values  
-See [here](https://www.imagemagick.org/api/MagickCore/image_8h.html#af89b808293a7faf805254d1b01e69dc2)  
+See [here](https://imagemagick.org/api/MagickCore/image_8h.html#af89b808293a7faf805254d1b01e69dc2)  
 Example  
 ```lua
 local magick = require "imagick"
@@ -90,7 +90,7 @@ print(magick.interlace["JPEGInterlace"])
 #### imagick.colorspace
 
 Colorspace values  
-See [here](http://www.imagemagick.org/api/MagickCore/colorspace_8h.html#a5d516b430fa42c1f83b557f08128f3c2)  
+See [here](https://imagemagick.org/api/MagickCore/colorspace_8h.html#a5d516b430fa42c1f83b557f08128f3c2)  
 
 Example  
 ```lua
@@ -101,7 +101,7 @@ print(magick.colorspace["YUVColorspace"])
 #### imagick.filters
 
 Scale filters  
-See [here](http://www.imagemagick.org/api/MagickCore/resample_8h.html#a12be80da7313b1cc5a7e1061c0c108ea)  
+See [here](https://imagemagick.org/api/MagickCore/resample_8h.html#a12be80da7313b1cc5a7e1061c0c108ea)  
 
 Example  
 ```lua
@@ -112,7 +112,7 @@ print(magick.filters["LanczosSharpFilter"])
 #### imagick.composite_op
 
 Composite operations  
-See [here](http://www.imagemagick.org/api/MagickCore/composite_8h.html#a55ded0ef54def8597243db2375b987fb)  
+See [here](https://imagemagick.org/api/MagickCore/composite_8h.html#a55ded0ef54def8597243db2375b987fb)  
 
 Example  
 ```lua
@@ -146,15 +146,15 @@ Font align
 #### imagick.channel
 
 Color channels  
-See [here](http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType)
+See [here](https://imagemagick.org/Magick++/Enumerations.html#ChannelType)
 
 #### imagick.distort_method
 
 methods for MagickDistortImage  
-See [here](https://www.imagemagick.org/api/MagickCore/distort_8h.html#a3f53506aaaafd01ef4d52174edfce258)
+See [here](https://imagemagick.org/api/MagickCore/distort_8h.html#a3f53506aaaafd01ef4d52174edfce258)
 
 Color channels  
-See [here](http://www.imagemagick.org/Magick++/Enumerations.html#ChannelType)
+See [here](https://imagemagick.org/Magick++/Enumerations.html#ChannelType)
 
 ### imagick functions
 
@@ -177,7 +177,7 @@ Open image from data blob
 
 #### `<image>image, <string>error = imagick.open_pseudo(<int> width, <int> height, <string> definition)`
 
-Create image from pseudo-image definition. See [here](http://www.imagemagick.org/script/formats.php#pseudo)
+Create image from pseudo-image definition. See [here](https://imagemagick.org/script/formats.php#pseudo)
 
 ******
 
@@ -299,7 +299,7 @@ Set imagemagick option for image
 
 #### `<string>value = img:get_artifact(<string> name)`
 
-Get imagemagick artifact for image. See [here](http://www.imagemagick.org/script/command-line-options.php#define)
+Get imagemagick artifact for image. See [here](https://imagemagick.org/script/command-line-options.php#define)
 
 ******
 
@@ -608,7 +608,7 @@ Adaptively resize image with data dependent triangulation using current image fi
 
 #### `<bool>status, <string>error = img:resample(<int>width, <int> height, <int> filter, <double> blur)`
 
-Resample image. See [http://www.imagemagick.org/api/magick-image.php#MagickResampleImage](http://www.imagemagick.org/api/magick-image.php#MagickResampleImage)
+Resample image. See [https://imagemagick.org/api/magick-image.php#MagickResampleImage](https://imagemagick.org/api/magick-image.php#MagickResampleImage)
 
 ******
 
@@ -677,15 +677,22 @@ Set DrawingWand stroke color
 
 #### `img:query_metrics(<string> text)`
 
-Query font metrics. See http://www.imagemagick.org/api/magick-wand.php#MagickQueryFontMetrics
+Query font metrics. See https://imagemagick.org/api/magick-wand.php#MagickQueryFontMetrics
+Returns 13 <double> variables or nil,<string>error
+
+******
+
+#### `img:query_multiline_metrics(<string> text)`
+
+Query font metrics. See https://imagemagick.org/api/magick-wand.php#MagickQueryMultilineFontMetrics
 Returns 13 <double> variables or nil,<string>error
 
 ******
 
 #### `<bool>status, <string>error = img:distort(<distort_method> method, <array> params, <bool> bestfit)`
 
-Distorts image. See https://www.imagemagick.org/api/magick-image.php#MagickDistortImage  
-Example (http://www.imagemagick.org/Usage/distorts/#arc):  
+Distorts image. See https://imagemagick.org/api/magick-image.php#MagickDistortImage  
+Example (https://imagemagick.org/Usage/distorts/#arc):  
 ```lua
 local magick = require "imagick"
 local img = magick.open("rose.jpg")
@@ -700,8 +707,8 @@ img:write("out.jpg")
 #### `<bool>status, <string>error = img:threshold(<int> value)`
 
 Apply simultaneous black/white threshold to the image.  
-See https://www.imagemagick.org/api/magick-image.php#MagickThresholdImage  
-See https://www.imagemagick.org/script/command-line-options.php#threshold  
+See https://imagemagick.org/api/magick-image.php#MagickThresholdImage  
+See https://imagemagick.org/script/command-line-options.php#threshold  
   
 `value` is effective between `0` and `0xffff`
 ```lua
@@ -724,8 +731,8 @@ img:write("out.jpg")
 
 Trim an image.  
 This option removes any edges that are exactly the same color as the corner pixels. Use fuzz to make trim remove edges that are nearly the same color as the corner pixels.  
-See https://www.imagemagick.org/api/magick-image.php#MagickTrimImage  
-See https://www.imagemagick.org/script/command-line-options.php#trim  
+See https://imagemagick.org/api/magick-image.php#MagickTrimImage  
+See https://imagemagick.org/script/command-line-options.php#trim  
   
 `fuzz` is effective between `0` and `0xffff`
 ```lua

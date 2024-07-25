@@ -1958,6 +1958,37 @@ static int imagick_query_metrics(lua_State* L)
   return 13;
 }
 
+static int imagick_query_multiline_metrics(lua_State* L)
+{
+  LuaImage* a = checkimage(L, 1);
+  const char* text = luaL_checkstring(L, 2);
+
+  double* result = MagickQueryMultilineFontMetrics(a->m_wand, a->d_wand, text);
+  if (result == (double *) NULL)
+  {
+    ExceptionType severity;
+    char* error=MagickGetException(a->m_wand, &severity);
+    lua_pushboolean(L, 0);
+    lua_pushstring(L, error);
+    return 2;
+  }
+
+  lua_pushnumber(L, result[0]);
+  lua_pushnumber(L, result[1]);
+  lua_pushnumber(L, result[2]);
+  lua_pushnumber(L, result[3]);
+  lua_pushnumber(L, result[4]);
+  lua_pushnumber(L, result[5]);
+  lua_pushnumber(L, result[6]);
+  lua_pushnumber(L, result[7]);
+  lua_pushnumber(L, result[8]);
+  lua_pushnumber(L, result[9]);
+  lua_pushnumber(L, result[10]);
+  lua_pushnumber(L, result[11]);
+  lua_pushnumber(L, result[12]);
+  return 13;
+}
+
 static int imagick_distort(lua_State* L)
 {
   LuaImage* a = checkimage(L, 1);
@@ -2250,6 +2281,7 @@ static const struct luaL_Reg imagicklib_m[] = {
   {"level",                           imagick_level},
   {"level_channel",                   imagick_level_channel},
   {"query_metrics",                   imagick_query_metrics},
+  {"query_multiline_metrics",         imagick_query_multiline_metrics},
   {"distort",                         imagick_distort},
   {"flip",                            imagick_flip},
   {"flop",                            imagick_flop},
